@@ -14,7 +14,7 @@ Vartotojų tipai:
 
 Objektai: Psichologas – vizitas – vizito aprašymas.
 
-  # 1.2.	Funkciniai reikalavimai
+  ## 1.2.	Funkciniai reikalavimai
 
 Neregistruotas vartotojas galės:
 1. Peržiūrėti informacija apie kliniką.
