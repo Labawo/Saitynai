@@ -14,7 +14,7 @@ Projekto tikslas – palengvinti vizito tarp paciento ir psichologo planavimą i
 
     Objektai: Psichologas – vizitas – vizito aprašymas.
 
-  ## 1.2.	Funkciniai reikalavimai
+  # 1.2.	Funkciniai reikalavimai
 
   Neregistruotas vartotojas galės:
     Markup : 1.	Peržiūrėti informacija apie kliniką.
