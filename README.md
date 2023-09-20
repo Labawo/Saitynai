@@ -2,17 +2,7 @@
 
   ## 1.1.	Sistemos paskirtis
 
-    Projekto tikslas – palengvinti vizito tarp paciento ir psichologo planavimą ir pagerinti psichologo teikiamas paslaugas.
-
-    Vartotojas norėdamas tapti pacientu turės prisiregistruoti prie sistemos ir galės registruotis į vizitą su norimu psichologu arba į seansą, peržiūrėti savo vizitų aprašymo istoriją. Psichologai galės peržiūrėti turimų pacientų sąrašą, pildyti ir redaguoti vizito aprašymą, kurti grupinius terapinius seansus. patvirtinti paciento pasirinkto vizito laiką, matyti jam priskirtų konsultacijų laikus. Administratorius galės tvirtinti užregistruotus psichologus ir pacientus, redaguoti psichologų konsultacijos laikus, šalinti registruotus vartotojus pridėti įvairių tipų terapijas.
-
-    Vartotojų tipai:
-    Markup : 1.	Svečias.
-      2.	Registruotas vartotojas (pacientas).
-      3.	Psichologas.
-      4.	Administratorius.
-
-    Objektai: Psichologas – vizitas – vizito aprašymas.
+    
 
   ## 1.2.	Funkciniai reikalavimai
 
