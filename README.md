@@ -33,10 +33,10 @@ Psichologai galės:
 3.	Kurti vizito su pacientu aprašymą.
 4.	Redaguoti vizito su pacientu aprašymą.
 5.	Kurti terapinius seansus:
-  - Įkelti nuotrauką
-  - Pateikti aprašymą.
-  - Nurodyti kiek yra galimų vietų.
-  - Nurodyti seanso kainą.
+    - Įkelti nuotrauką
+    - Pateikti aprašymą.
+    - Nurodyti kiek yra galimų vietų.
+    - Nurodyti seanso kainą.
 6.	Redaguoti profilį.
 
 Administratorius galės:
@@ -45,6 +45,6 @@ Administratorius galės:
 3.	Šalinti vartotojus.
 4.	Keisti psichologų galimų vizitų skaičių ir laiką.
 5.	Valdyti terapijų kategorijas.
-  - Pridėti naują terapijos kategoriją.
-  - Redaguoti esamą terapijos kategoriją.
-  - Naikinti esamą terapijos kategoriją.
+    - Pridėti naują terapijos kategoriją.
+    - Redaguoti esamą terapijos kategoriją.
+    - Naikinti esamą terapijos kategoriją.
