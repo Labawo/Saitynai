@@ -41,9 +41,10 @@ Psichologai galės:
 
 Administratorius galės:
 1.	Patvirtinti vartotojo registraciją.
-2.	Šalinti vartotojus.
-3.	Keisti psichologų galimų vizitų skaičių ir laiką.
-4.	Valdyti terapijų kategorijas.
+2.	Patvirtinti psichologo registraciją.
+3.	Šalinti vartotojus.
+4.	Keisti psichologų galimų vizitų skaičių ir laiką.
+5.	Valdyti terapijų kategorijas.
   - Pridėti naują terapijos kategoriją.
   - Redaguoti esamą terapijos kategoriją.
   - Naikinti esamą terapijos kategoriją.
