@@ -33,10 +33,10 @@ Psichologai galės:
 3.	Kurti vizito su pacientu aprašymą.
 4.	Redaguoti vizito su pacientu aprašymą.
 5.	Kurti terapinius seansus:
-Įkelti nuotrauką
-  5.1. Pateikti aprašymą.
-  5.2. Nurodyti kiek yra galimų vietų.
-  5.3. Nurodyti seanso kainą.
+  5.1. Įkelti nuotrauką
+  5.2. Pateikti aprašymą.
+  5.3. Nurodyti kiek yra galimų vietų.
+  5.4. Nurodyti seanso kainą.
 6.	Redaguoti profilį.
 
 Administratorius galės:
