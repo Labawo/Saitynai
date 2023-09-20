@@ -2,7 +2,7 @@
 
   ## 1.1.	Sistemos paskirtis
 
-    hkldakjfl;awglaklgh;alhksgjakl;jka
+    Hello it is me and I am here
 
   ## 1.2.	Funkciniai reikalavimai
 
