@@ -2,7 +2,7 @@
 
   ## 1.1.	Sistemos paskirtis
 
-    
+    hkldakjfl;awglaklgh;alhksgjakl;jka
 
   ## 1.2.	Funkciniai reikalavimai
 
