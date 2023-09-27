@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RestLS.Data.Dtos.Doctors;
 using RestLS.Data.Entities;
+using RestLS.Helpers;
 
 namespace RestLS.Data.Repositories;
 
@@ -7,6 +9,7 @@ public interface IDoctorsRepository
 {
     Task<Doctor?> GetAsync(int doctorId);
     Task<IReadOnlyList<Doctor>> GetManyAsync();
+    Task<PagedList<Doctor>> GetManyAsync(DoctorSearchParameters doctorSearchParameters);
     Task CreateAsync(Doctor doctor);
     Task UpdateAsync(Doctor doctor);
     Task RemoveAsync(Doctor doctor);
@@ -29,6 +32,13 @@ public class DoctorsRepository : IDoctorsRepository
     public async Task<IReadOnlyList<Doctor>> GetManyAsync()
     {
         return await _appointmentDbContext.Doctors.ToListAsync();
+    }
+    
+    public async Task<PagedList<Doctor>> GetManyAsync(DoctorSearchParameters doctorSearchParameters)
+    {
+        var queryable = _appointmentDbContext.Doctors.AsQueryable().OrderBy(o => o.Lastname);
+        
+        return await PagedList<Doctor>.CreateAsync(queryable, doctorSearchParameters.PageNumber, doctorSearchParameters.PageSize);
     }
 
     public async Task CreateAsync(Doctor doctor)

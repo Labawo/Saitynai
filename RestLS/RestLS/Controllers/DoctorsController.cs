@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+using RestLS.Data;
 using RestLS.Data.Dtos.Doctors;
 using RestLS.Data.Entities;
 using RestLS.Data.Repositories;
@@ -17,17 +19,46 @@ public class DoctorsController : ControllerBase
     }
     
     // AutoMapper library for making remapping for sending to API
-    [HttpGet]
-    public async Task<IEnumerable<DoctorDto>> GetMany()
+    //[HttpGet]
+    /*public async Task<IEnumerable<DoctorDto>> GetMany()
     {
         var doctors = await _doctorsRepository.GetManyAsync();
         
         return doctors.Select(o => new DoctorDto(o.Id, o.Name, o.Lastname, o.Description));
+    }*/
+    
+    [HttpGet(Name = "GetDoctors")]
+    public async Task<IEnumerable<DoctorDto>> GetManyPaging([FromQuery] DoctorSearchParameters searchParameters)
+    {
+        var doctors = await _doctorsRepository.GetManyAsync(searchParameters);
+
+        var previousPageLink = doctors.HasPrevious
+            ? CreateDoctorsResourceUri(searchParameters,
+                RecourceUriType.PreviousPage)
+            : null;
+        
+        var nextPageLink = doctors.HasNext
+            ? CreateDoctorsResourceUri(searchParameters,
+                RecourceUriType.NextPage)
+            : null;
+
+        var paginationMetaData = new
+        {
+            totalCount = doctors.TotalCount,
+            pageSize = doctors.PageSize,
+            currentPage = doctors.CurrentPage,
+            totalPages = doctors.TotalPages,
+            previousPageLink,
+            nextPageLink
+        };
+        
+        Response.Headers.Add("Pagination", JsonSerializer.Serialize(paginationMetaData));
+
+        return doctors.Select(o => new DoctorDto(o.Id, o.Name, o.Lastname, o.Description));
     }
     
     // api/doctors/{doctorID}
-    [HttpGet]
-    [Route("{doctorID}", Name = "GetDoctor")]
+    [HttpGet("{doctorID}", Name = "GetDoctor")]
     public async Task<ActionResult<DoctorDto>> Get(int doctorId)
     {
         var doctor = await _doctorsRepository.GetAsync(doctorId);
@@ -37,8 +68,12 @@ public class DoctorsController : ControllerBase
         {
             return NotFound();
         }
+
+        var links = CreateLinksForDoctors(doctorId);
+
+        var doctorDto = new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.Description);
         
-        return new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.Description);
+        return Ok(new { Resource = doctorDto, Links = links});
     }
     
     [HttpPost]
@@ -72,8 +107,7 @@ public class DoctorsController : ControllerBase
         return Ok(new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.Description));
     }
     
-    [HttpDelete]
-    [Route("{doctorID}")]
+    [HttpDelete("{doctorID}", Name = "DeleteDoctor")]
     public async Task<ActionResult> Remove(int doctorId)
     {
         var doctor = await _doctorsRepository.GetAsync(doctorId);
@@ -87,5 +121,36 @@ public class DoctorsController : ControllerBase
         
         //204
         return NoContent();
+    }
+
+    private IEnumerable<LinkDto> CreateLinksForDoctors(int doctorId)
+    {
+        yield return new LinkDto{ Href = Url.Link("GetDoctor", new {doctorId}), Rel = "self", Method = "GET"};
+        yield return new LinkDto{ Href = Url.Link("DeleteDoctor", new {doctorId}), Rel = "delete_topic", Method = "DELETE"};
+    }
+
+    private string? CreateDoctorsResourceUri(DoctorSearchParameters doctorSearchParametersDto, RecourceUriType type)
+    {
+        return type switch
+        {
+            RecourceUriType.PreviousPage => Url.Link("GetDoctors",
+                new
+                {
+                    pageNumber = doctorSearchParametersDto.PageNumber - 1,
+                    pageSize = doctorSearchParametersDto.PageSize,
+                }),
+            RecourceUriType.NextPage => Url.Link("GetDoctors",
+                new
+                {
+                    pageNumber = doctorSearchParametersDto.PageNumber + 1,
+                    pageSize = doctorSearchParametersDto.PageSize,
+                }),
+            _ => Url.Link("GetDoctors",
+                new
+                {
+                    pageNumber = doctorSearchParametersDto.PageNumber,
+                    pageSize = doctorSearchParametersDto.PageSize,
+                })
+        };
     }
 }
