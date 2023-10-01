@@ -3,7 +3,7 @@ using RestLS.Data.Entities;
 
 namespace RestLS.Data;
 
-public class AppointmentDbContext : DbContext
+public class LS_DbContext : Microsoft.EntityFrameworkCore.DbContext
 {
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<Appointment> Appointments { get; set; }

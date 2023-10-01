@@ -17,45 +17,45 @@ public interface IDoctorsRepository
 
 public class DoctorsRepository : IDoctorsRepository
 {
-    private readonly AppointmentDbContext _appointmentDbContext;
+    private readonly LS_DbContext _lsDbContext;
     
-    public DoctorsRepository(AppointmentDbContext appointmentDbContext)
+    public DoctorsRepository(LS_DbContext lsDbContext)
     {
-        _appointmentDbContext = appointmentDbContext;
+        _lsDbContext = lsDbContext;
     }
 
     public async Task<Doctor?> GetAsync(int doctorId)
     {
-        return await _appointmentDbContext.Doctors.FirstOrDefaultAsync(o => o.Id == doctorId);
+        return await _lsDbContext.Doctors.FirstOrDefaultAsync(o => o.Id == doctorId);
     }
 
     public async Task<IReadOnlyList<Doctor>> GetManyAsync()
     {
-        return await _appointmentDbContext.Doctors.ToListAsync();
+        return await _lsDbContext.Doctors.ToListAsync();
     }
     
-    public async Task<PagedList<Doctor>> GetManyAsync(DoctorSearchParameters doctorSearchParameters)
+    public async Task<PagedList <Doctor>> GetManyAsync(DoctorSearchParameters doctorSearchParameters)
     {
-        var queryable = _appointmentDbContext.Doctors.AsQueryable().OrderBy(o => o.Lastname);
+        var queryable = _lsDbContext.Doctors.AsQueryable().OrderBy(o => o.Lastname);
         
         return await PagedList<Doctor>.CreateAsync(queryable, doctorSearchParameters.PageNumber, doctorSearchParameters.PageSize);
     }
 
     public async Task CreateAsync(Doctor doctor)
     {
-        _appointmentDbContext.Doctors.Add(doctor);
-        await _appointmentDbContext.SaveChangesAsync();
+        _lsDbContext.Doctors.Add(doctor);
+        await _lsDbContext.SaveChangesAsync();
     }
     
     public async Task UpdateAsync(Doctor doctor)
     {
-        _appointmentDbContext.Doctors.Update(doctor);
-        await _appointmentDbContext.SaveChangesAsync();
+        _lsDbContext.Doctors.Update(doctor);
+        await _lsDbContext.SaveChangesAsync();
     }
     
     public async Task RemoveAsync(Doctor doctor)
     {
-        _appointmentDbContext.Doctors.Remove(doctor);
-        await _appointmentDbContext.SaveChangesAsync();
+        _lsDbContext.Doctors.Remove(doctor);
+        await _lsDbContext.SaveChangesAsync();
     }
 }

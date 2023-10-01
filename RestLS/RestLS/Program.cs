@@ -9,8 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<AppointmentDbContext>();
+builder.Services.AddDbContext<LS_DbContext>();
 builder.Services.AddTransient<IDoctorsRepository, DoctorsRepository>();
+builder.Services.AddTransient<IAppointmentsRepository, AppointmentsRepository>();
 
 var app = builder.Build();
 

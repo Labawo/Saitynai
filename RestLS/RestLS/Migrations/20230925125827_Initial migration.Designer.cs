@@ -11,7 +11,7 @@ using RestLS.Data;
 
 namespace RestLS.Migrations
 {
-    [DbContext(typeof(AppointmentDbContext))]
+    [DbContext(typeof(LS_DbContext))]
     [Migration("20230925125827_Initial migration")]
     partial class Initialmigration
     {
