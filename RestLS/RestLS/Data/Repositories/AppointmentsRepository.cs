@@ -23,12 +23,12 @@ public class AppointmentsRepository : IAppointmentsRepository
     
     public async Task<Appointment?> GetAsync(int doctorId, int appointmentId)
     {
-        return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.ID == appointmentId && o.DoctorId == doctorId);
+        return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.ID == appointmentId && o.Doc.Id == doctorId);
     }
 
     public async Task<IReadOnlyList<Appointment>> GetManyAsync(int doctorId)
     {
-        return await _lsDbContext.Appointments.Where(o => o.DoctorId == doctorId).ToListAsync();
+        return await _lsDbContext.Appointments.Where(o => o.Doc.Id == doctorId).ToListAsync();
     }
     
     public async Task CreateAsync(Appointment appointment)

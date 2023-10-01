@@ -19,38 +19,38 @@ public class AppointmentController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<IEnumerable<AppointmentDto>> GetAllAsync(int doctorId)
+    public async Task<IEnumerable<AppointmentDto>> GetMany(int doctorId)
     {
         var appoitments = await _appointmentRepository.GetManyAsync(doctorId);
-        return appoitments.Select(o => new AppointmentDto(o.ID, o.Name, o.DoctorId));
+        return appoitments.Select(o => new AppointmentDto(o.ID, o.Name));
     }
 
     // /api/topics/1/posts/2
-    [HttpGet("{appoitmentId}", Name = "GetAppointment")]
-    public async Task<ActionResult<AppointmentDto>> GetAsync(int doctorId, int appointmentId)
+    [HttpGet("{appointmentId}", Name = "GetAppointment")]
+    public async Task<ActionResult<AppointmentDto>> Get(int doctorId, int appointmentId)
     {
         var appointment = await _appointmentRepository.GetAsync(doctorId, appointmentId);
         if (appointment == null) return NotFound();
 
-        return Ok(new AppointmentDto(appointment.ID, appointment.Name, appointment.DoctorId));
+        return Ok(new AppointmentDto(appointment.ID, appointment.Name));
     }
 
     [HttpPost]
-    public async Task<ActionResult<AppointmentDto>> PostAsync(int doctorId, CreateAppointmentDto appoitmentDto)
+    public async Task<ActionResult<AppointmentDto>> Create(int doctorId, CreateAppointmentDto appoitmentDto)
     {
         var doctor = await _doctorsRepository.GetAsync(doctorId);
         if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
 
         var appoitment = new Appointment{Name = appoitmentDto.Name};
-        appoitment.DoctorId = doctorId;
+        appoitment.Doc = doctor;
 
         await _appointmentRepository.CreateAsync(appoitment);
 
-        return Created("GetAppointment", new AppointmentDto(appoitment.ID, appoitment.Name, appoitment.DoctorId));
+        return Created("GetAppointment", new AppointmentDto(appoitment.ID, appoitment.Name));
     }
 
     [HttpPut("{appoitmentId}")]
-    public async Task<ActionResult<AppointmentDto>> PostAsync(int doctorId, int appoitmentId, UpdateAppointmentDto updateappoitmentDto)
+    public async Task<ActionResult<AppointmentDto>> Update(int doctorId, int appoitmentId, UpdateAppointmentDto updateappoitmentDto)
     {
         var doctor = await _doctorsRepository.GetAsync(doctorId);
         if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
@@ -64,11 +64,11 @@ public class AppointmentController : ControllerBase
 
         await _appointmentRepository.UpdateAsync(oldAppoitment);
 
-        return Ok(new AppointmentDto(oldAppoitment.ID, oldAppoitment.Name, oldAppoitment.DoctorId));
+        return Ok(new AppointmentDto(oldAppoitment.ID, oldAppoitment.Name));
     }
 
     [HttpDelete("{appoitmentId}")]
-    public async Task<ActionResult> DeleteAsync(int doctorId, int appoitmentId)
+    public async Task<ActionResult> Remove(int doctorId, int appoitmentId)
     {
         var appoitment = await _appointmentRepository.GetAsync(doctorId, appoitmentId);
         if (appoitment == null)

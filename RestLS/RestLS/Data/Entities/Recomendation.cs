@@ -6,5 +6,7 @@ public class Recomendation
     public string Name { get; set; }
     public string Description { get; set; }
     
+    public DateTime RecomendationDate { get; set; }
+    
     public Appointment Appoint { get; set; }
 }

@@ -10,8 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<LS_DbContext>();
+//adding repost
 builder.Services.AddTransient<IDoctorsRepository, DoctorsRepository>();
 builder.Services.AddTransient<IAppointmentsRepository, AppointmentsRepository>();
+builder.Services.AddTransient<IRecomendationsRepository, RecomendationsRepository>();
+
+//migration after changing entities  
+// dotnet ef migrations add InitialCreate
+// dotnet ef database update
 
 var app = builder.Build();
 
