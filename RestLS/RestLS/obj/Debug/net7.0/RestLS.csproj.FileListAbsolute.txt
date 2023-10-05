@@ -68,3 +68,4 @@ C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\Microsoft.EntityFramewor
 C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\Microsoft.Extensions.DependencyModel.dll
 C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\Mono.TextTemplating.dll
 C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\System.CodeDom.dll
+C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\BCrypt.Net-Next.dll

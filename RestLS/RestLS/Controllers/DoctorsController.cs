@@ -54,7 +54,7 @@ public class DoctorsController : ControllerBase
         
         Response.Headers.Add("Pagination", JsonSerializer.Serialize(paginationMetaData));
 
-        return doctors.Select(o => new DoctorDto(o.Id, o.Name, o.Lastname, o.Description));
+        return doctors.Select(o => new DoctorDto(o.Id, o.Name, o.Lastname));
     }
     
     // api/doctors/{doctorID}
@@ -71,7 +71,7 @@ public class DoctorsController : ControllerBase
 
         var links = CreateLinksForDoctors(doctorId);
 
-        var doctorDto = new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.Description);
+        var doctorDto = new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname);
         
         return Ok(new { Resource = doctorDto, Links = links});
     }
@@ -79,12 +79,12 @@ public class DoctorsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<DoctorDto>> Create(CreateDoctorDto createDoctorDto)
     {
-        var doctor = new Doctor{Name = createDoctorDto.Name,Lastname = createDoctorDto.LastName, Description = createDoctorDto.Description};
+        var doctor = new Doctor{Name = createDoctorDto.Name,Lastname = createDoctorDto.LastName};
 
         await _doctorsRepository.CreateAsync(doctor);
         
         //201
-        return Created("", new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.Description));
+        return Created("", new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname));
         //return CreatedAtAction("GetDoctor", new { doctorId = doctor.Id }, new DoctorDto(doctor.Name, doctor.Lastname, doctor.Description));
     }
     
@@ -98,13 +98,12 @@ public class DoctorsController : ControllerBase
         {
             return NotFound();
         }
-
-        doctor.Description = updateDoctorDto.Description;
+        
         doctor.Lastname = updateDoctorDto.LastName;
         
         await _doctorsRepository.UpdateAsync(doctor);
 
-        return Ok(new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.Description));
+        return Ok(new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname));
     }
     
     [HttpDelete("{doctorID}", Name = "DeleteDoctor")]
