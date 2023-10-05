@@ -17,6 +17,7 @@ builder.Services.AddTransient<IRecomendationsRepository, RecomendationsRepositor
 builder.Services.AddTransient<IAdminsRepository, AdminsRepository>();
 builder.Services.AddTransient<IPatientsRepository, PatientsRepository>();
 builder.Services.AddTransient<IGroupSessionsRepository, GroupSessionsRepository>();
+builder.Services.AddTransient<ISessionReceitsRepository, SessionReceitsRepository>();
 //builder.Services.AddTransient<IUsersRepository, UsersRepository>();
 
 //migration after changing entities  

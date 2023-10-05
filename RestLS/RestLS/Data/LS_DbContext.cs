@@ -11,6 +11,8 @@ public class LS_DbContext : Microsoft.EntityFrameworkCore.DbContext
     public DbSet<Admin> Admins { get; set; }
     public DbSet<Patient> Patient { get; set; }
     public DbSet<GroupSession> GroupSessions { get; set; }
+    
+    public DbSet<SessionReceit> SessionReceits { get; set; }
     //public DbSet<User> UsersRepo { get; set; }
     /*
     
