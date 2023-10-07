@@ -8,6 +8,6 @@ public class GroupSession
     public DateTime Time { get; set; }
     public DateTime GSDate { get; set; }
     public int Spaces { get; set; }
-    public float Price { get; set; }
+    public double Price { get; set; }
     public Doctor Doc { get; set; }
 }

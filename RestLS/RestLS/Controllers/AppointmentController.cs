@@ -41,8 +41,12 @@ public class AppointmentController : ControllerBase
         var doctor = await _doctorsRepository.GetAsync(doctorId);
         if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
 
-        var appoitment = new Appointment{Name = appoitmentDto.Name};
+        var appoitment = new Appointment{Name = appoitmentDto.Name, Price = appoitmentDto.Price};
         appoitment.Doc = doctor;
+        appoitment.AppointmentDate = DateTime.Now;
+        appoitment.IsAvailable = true;
+        appoitment.Time = DateTime.Parse(appoitmentDto.Time);
+        
 
         await _appointmentRepository.CreateAsync(appoitment);
 
@@ -61,10 +65,12 @@ public class AppointmentController : ControllerBase
 
         //oldPost.Body = postDto.Body;
         oldAppoitment.Name = updateappoitmentDto.Name;
+        oldAppoitment.Price = updateappoitmentDto.Price;
+        oldAppoitment.Time = DateTime.Parse(updateappoitmentDto.Time);
 
         await _appointmentRepository.UpdateAsync(oldAppoitment);
 
-        return Ok(new AppointmentDto(oldAppoitment.ID, oldAppoitment.Name));
+        return Ok(new AppointmentTimeDto(oldAppoitment.ID, oldAppoitment.Name, oldAppoitment.Time));
     }
 
     [HttpDelete("{appoitmentId}")]

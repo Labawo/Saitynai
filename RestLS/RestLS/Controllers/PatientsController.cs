@@ -40,7 +40,8 @@ public class PatientsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PatientDto>> Create(CreatePatientDto createPatientDto)
     {
-        var patient = new Patient{Name = createPatientDto.Name, Lastname = createPatientDto.Lastname, PhoneNumb = createPatientDto.Phone, Email = createPatientDto.Email};
+        var patient = new Patient{Name = createPatientDto.Name, Lastname = createPatientDto.Lastname,
+            PhoneNumb = createPatientDto.Phone, Email = createPatientDto.Email};
         
 
         await _patientsRepository.CreateAsync(patient);
@@ -62,6 +63,8 @@ public class PatientsController : ControllerBase
         }
         
         patient.Lastname = updatePatientDto.Lastname;
+        patient.Email = updatePatientDto.Email;
+        patient.PhoneNumb = updatePatientDto.Phone;
         
         await _patientsRepository.UpdateAsync(patient);
 

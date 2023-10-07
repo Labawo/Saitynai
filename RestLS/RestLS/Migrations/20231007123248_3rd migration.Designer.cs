@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestLS.Data;
 
@@ -11,9 +12,11 @@ using RestLS.Data;
 namespace RestLS.Migrations
 {
     [DbContext(typeof(LS_DbContext))]
-    partial class LS_DbContextModelSnapshot : ModelSnapshot
+    [Migration("20231007123248_3rd migration")]
+    partial class _3rdmigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,6 +67,9 @@ namespace RestLS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PatId")
+                        .HasColumnType("int");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
@@ -73,6 +79,8 @@ namespace RestLS.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("DocId");
+
+                    b.HasIndex("PatId");
 
                     b.ToTable("Appointments");
                 });
@@ -245,7 +253,15 @@ namespace RestLS.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RestLS.Data.Entities.Patient", "Pat")
+                        .WithMany()
+                        .HasForeignKey("PatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Doc");
+
+                    b.Navigation("Pat");
                 });
 
             modelBuilder.Entity("RestLS.Data.Entities.GroupSession", b =>

@@ -41,7 +41,12 @@ public class GroupSessionsController : ControllerBase
         var doctor = await _doctorsRepository.GetAsync(doctorId);
         if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
 
-        var groupsession = new GroupSession{Name = groupSessionDto.Name};
+        var groupsession = new GroupSession
+        {
+            Name = groupSessionDto.Name, Price = groupSessionDto.Price,
+            Spaces = groupSessionDto.Spaces, Description = groupSessionDto.Description
+        };
+        groupsession.Time = DateTime.ParseExact(groupSessionDto.Time, @"h\:m", null);
         groupsession.Doc = doctor;
 
         await _groupSessionsRepository.CreateAsync(groupsession);
@@ -61,6 +66,10 @@ public class GroupSessionsController : ControllerBase
 
         //oldPost.Body = postDto.Body;
         oldGroupSession.Name = updateGroupSessionDto.Name;
+        oldGroupSession.Spaces = updateGroupSessionDto.Spaces;
+        oldGroupSession.Price = updateGroupSessionDto.Price;
+        oldGroupSession.Description = updateGroupSessionDto.Description;
+        oldGroupSession.Time = DateTime.ParseExact(updateGroupSessionDto.Time, @"h\:m", null);
 
         await _groupSessionsRepository.UpdateAsync(oldGroupSession);
 

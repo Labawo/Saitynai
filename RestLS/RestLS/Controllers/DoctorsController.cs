@@ -79,7 +79,9 @@ public class DoctorsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<DoctorDto>> Create(CreateDoctorDto createDoctorDto)
     {
-        var doctor = new Doctor{Name = createDoctorDto.Name,Lastname = createDoctorDto.LastName};
+        var doctor = new Doctor{Name = createDoctorDto.Name,Lastname = createDoctorDto.LastName
+            , Email = createDoctorDto.Email, Experience = createDoctorDto.Experience
+            , PhoneNumb = createDoctorDto.PhoneNumb};
 
         await _doctorsRepository.CreateAsync(doctor);
         
@@ -100,6 +102,8 @@ public class DoctorsController : ControllerBase
         }
         
         doctor.Lastname = updateDoctorDto.LastName;
+        doctor.Email = updateDoctorDto.Email;
+        doctor.PhoneNumb = updateDoctorDto.PhoneNumb;
         
         await _doctorsRepository.UpdateAsync(doctor);
 

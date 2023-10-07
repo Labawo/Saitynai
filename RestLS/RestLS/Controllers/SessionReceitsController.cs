@@ -40,11 +40,16 @@ public class SessionReceitsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<SessionReceitDto>> Create(int doctorId,int groupSessionId, CreateSessionReceitDto createSessionReceitDto)
     {
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
+        
         var groupSession = await _groupSessionsRepository.GetAsync(doctorId, groupSessionId);
-        if (groupSession == null) return NotFound($"Couldn't find an appointment with id of {groupSessionId}");
+        if (groupSession == null) return NotFound($"Couldn't find a group session with id of {groupSessionId}");
 
         var sessionReceit = new SessionReceit{Quantity = createSessionReceitDto.Quantity};
         sessionReceit.GroupSes = groupSession;
+        sessionReceit.Time = DateTime.Now;
+        sessionReceit.Price = groupSession.Price * createSessionReceitDto.Quantity;
 
         await _sessionReceitsRepository.CreateAsync(sessionReceit);
 

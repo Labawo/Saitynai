@@ -41,6 +41,9 @@ public class RecomendationsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<RecomendationDto>> Create(int doctorId,int appointmentId, CreateRecomendationDto recomendationDto)
     {
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
+        
         var appointment = await _appointmentRepository.GetAsync(doctorId, appointmentId);
         if (appointment == null) return NotFound($"Couldn't find an appointment with id of {appointmentId}");
 
@@ -54,12 +57,15 @@ public class RecomendationsController : ControllerBase
     }
 
     [HttpPut("{recomendationId}")]
-    public async Task<ActionResult<RecomendationDto>> Update(int doctorId, int appoitmentId,int recomendationId, UpdateRecomendationDto updaterecomendationDto)
+    public async Task<ActionResult<RecomendationDto>> Update(int doctorId, int appointmentId,int recomendationId, UpdateRecomendationDto updaterecomendationDto)
     {
-        var appointment = await _appointmentRepository.GetAsync(doctorId, appoitmentId);
-        if (appointment == null) return NotFound($"Couldn't find an appointment with id of {appoitmentId}");
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
+        
+        var appointment = await _appointmentRepository.GetAsync(doctorId, appointmentId);
+        if (appointment == null) return NotFound($"Couldn't find an appointment with id of {appointmentId}");
 
-        var oldRecomendation = await _recomendationsRepository.GetAsync(doctorId, appoitmentId, recomendationId);
+        var oldRecomendation = await _recomendationsRepository.GetAsync(doctorId, appointmentId, recomendationId);
         if (oldRecomendation == null)
             return NotFound();
 
@@ -73,9 +79,9 @@ public class RecomendationsController : ControllerBase
     }
 
     [HttpDelete("{recomendationId}")]
-    public async Task<ActionResult> Remove(int doctorId, int appoitmentId, int recomendationId)
+    public async Task<ActionResult> Remove(int doctorId, int appointmentId, int recomendationId)
     {
-        var recomendation = await _recomendationsRepository.GetAsync(doctorId, appoitmentId, recomendationId);
+        var recomendation = await _recomendationsRepository.GetAsync(doctorId, appointmentId, recomendationId);
         if (recomendation == null)
             return NotFound();
 
