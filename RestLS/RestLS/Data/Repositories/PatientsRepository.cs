@@ -6,6 +6,7 @@ namespace RestLS.Data.Repositories;
 public interface IPatientsRepository
 {
     Task<Patient?> GetAsync(int patientId);
+    Task<Patient?> GetAsync(string phone);
     Task<IReadOnlyList<Patient>> GetManyAsync();
     Task CreateAsync(Patient patient);
     Task UpdateAsync(Patient patient);
@@ -24,6 +25,11 @@ public class PatientsRepository : IPatientsRepository
     public async Task<Patient?> GetAsync(int patientId)
     {
         return await _lsDbContext.Patient.FirstOrDefaultAsync(o => o.Id == patientId);
+    }
+    
+    public async Task<Patient?> GetAsync(string phone)
+    {
+        return await _lsDbContext.Patient.FirstOrDefaultAsync(o => o.PhoneNumb == phone);
     }
 
     public async Task<IReadOnlyList<Patient>> GetManyAsync()

@@ -12,10 +12,12 @@ namespace RestLS.Controllers;
 public class DoctorsController : ControllerBase
 {
     private readonly IDoctorsRepository _doctorsRepository;
+    private readonly IPatientsRepository _patientsRepository;
 
-    public DoctorsController(IDoctorsRepository doctorsRepository)
+    public DoctorsController(IDoctorsRepository doctorsRepository, IPatientsRepository patientsRepository)
     {
         _doctorsRepository = doctorsRepository;
+        _patientsRepository = patientsRepository;
     }
     
     // AutoMapper library for making remapping for sending to API
@@ -54,7 +56,7 @@ public class DoctorsController : ControllerBase
         
         Response.Headers.Add("Pagination", JsonSerializer.Serialize(paginationMetaData));
 
-        return doctors.Select(o => new DoctorDto(o.Id, o.Name, o.Lastname, o.PhoneNumb, o.Email));
+        return doctors.Select(o => new DoctorDto(o.Id, o.Name, o.Lastname, o.PhoneNumb));
     }
     
     // api/doctors/{doctorID}
@@ -71,7 +73,7 @@ public class DoctorsController : ControllerBase
 
         var links = CreateLinksForDoctors(doctorId);
 
-        var doctorDto = new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.PhoneNumb, doctor.Email);
+        var doctorDto = new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.PhoneNumb);
         
         return Ok(new { Resource = doctorDto, Links = links});
     }
@@ -80,14 +82,28 @@ public class DoctorsController : ControllerBase
     public async Task<ActionResult<DoctorDto>> Create(CreateDoctorDto createDoctorDto)
     {
         var doctor = new Doctor{Name = createDoctorDto.Name,Lastname = createDoctorDto.LastName
-            , Email = createDoctorDto.Email, Experience = createDoctorDto.Experience
+            , Experience = createDoctorDto.Experience
             , PhoneNumb = createDoctorDto.PhoneNumb};
 
+        var existingDoctor = await _doctorsRepository.GetAsync(doctor.PhoneNumb);
+
+        if (existingDoctor != null)
+        {
+            return Conflict("Someone with the same phone number already exists.");
+        }
+        
+        var patient = await _patientsRepository.GetAsync(doctor.PhoneNumb);
+        if (patient != null)
+        {
+            return Conflict("Someone with the same phone number already exists.");
+        }
+        
         await _doctorsRepository.CreateAsync(doctor);
         
         //201
-        return Created("", new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.PhoneNumb, doctor.Email));
+        return Created("", new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.PhoneNumb));
         //return CreatedAtAction("GetDoctor", new { doctorId = doctor.Id }, new DoctorDto(doctor.Name, doctor.Lastname, doctor.Description));
+
     }
     
     [HttpPut]
@@ -103,12 +119,25 @@ public class DoctorsController : ControllerBase
 
         doctor.Name = updateDoctorDto.Name;
         doctor.Lastname = updateDoctorDto.LastName;
-        doctor.Email = updateDoctorDto.Email;
+        var patient = await _patientsRepository.GetAsync(updateDoctorDto.PhoneNumb);
+        if (patient != null)
+        {
+            return Conflict("Someone with the same phone number already exists.");
+        }
+        if (!string.Equals(doctor.PhoneNumb, updateDoctorDto.PhoneNumb))
+        {
+            var existingDoctor = await _doctorsRepository.GetAsync(updateDoctorDto.PhoneNumb);
+            
+            if (existingDoctor != null)
+            {
+                return Conflict("Someone with the same phone number already exists.");
+            }
+        }
         doctor.PhoneNumb = updateDoctorDto.PhoneNumb;
         
         await _doctorsRepository.UpdateAsync(doctor);
 
-        return Ok(new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.PhoneNumb, doctor.Email));
+        return Ok(new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.PhoneNumb));
     }
     
     [HttpDelete("{doctorID}", Name = "DeleteDoctor")]
