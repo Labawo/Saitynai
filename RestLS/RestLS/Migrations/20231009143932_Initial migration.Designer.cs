@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestLS.Data;
@@ -12,8 +11,8 @@ using RestLS.Data;
 namespace RestLS.Migrations
 {
     [DbContext(typeof(LS_DbContext))]
-    [Migration("20231007123248_3rd migration")]
-    partial class _3rdmigration
+    [Migration("20231009143932_Initial migration")]
+    partial class Initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,9 +20,7 @@ namespace RestLS.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("RestLS.Data.Entities.Admin", b =>
                 {
@@ -31,15 +28,13 @@ namespace RestLS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Lastname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -52,35 +47,28 @@ namespace RestLS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
                     b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("DocId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PatId")
-                        .HasColumnType("int");
+                        .HasColumnType("longtext");
 
                     b.Property<double>("Price")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("DocId");
-
-                    b.HasIndex("PatId");
 
                     b.ToTable("Appointments");
                 });
@@ -91,26 +79,24 @@ namespace RestLS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Experience")
                         .HasColumnType("int");
 
                     b.Property<string>("Lastname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumb")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -123,30 +109,28 @@ namespace RestLS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("DocId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("GSDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<double>("Price")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<int>("Spaces")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -161,23 +145,21 @@ namespace RestLS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Lastname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PhoneNumb")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -190,21 +172,19 @@ namespace RestLS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
                     b.Property<int>("AppointID")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("RecomendationDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("ID");
 
@@ -219,8 +199,6 @@ namespace RestLS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("GroupSesId")
                         .HasColumnType("int");
 
@@ -228,13 +206,13 @@ namespace RestLS.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("Price")
-                        .HasColumnType("float");
+                        .HasColumnType("double");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -253,15 +231,7 @@ namespace RestLS.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RestLS.Data.Entities.Patient", "Pat")
-                        .WithMany()
-                        .HasForeignKey("PatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Doc");
-
-                    b.Navigation("Pat");
                 });
 
             modelBuilder.Entity("RestLS.Data.Entities.GroupSession", b =>

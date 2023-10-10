@@ -11,16 +11,16 @@ namespace RestLS.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Appointments_Patient_PatId",
-                table: "Appointments");
+                name: "FK_SessionReceits_Patient_PatId",
+                table: "SessionReceits");
 
             migrationBuilder.DropIndex(
-                name: "IX_Appointments_PatId",
-                table: "Appointments");
+                name: "IX_SessionReceits_PatId",
+                table: "SessionReceits");
 
             migrationBuilder.DropColumn(
                 name: "PatId",
-                table: "Appointments");
+                table: "SessionReceits");
         }
 
         /// <inheritdoc />
@@ -28,19 +28,19 @@ namespace RestLS.Migrations
         {
             migrationBuilder.AddColumn<int>(
                 name: "PatId",
-                table: "Appointments",
+                table: "SessionReceits",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Appointments_PatId",
-                table: "Appointments",
+                name: "IX_SessionReceits_PatId",
+                table: "SessionReceits",
                 column: "PatId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Appointments_Patient_PatId",
-                table: "Appointments",
+                name: "FK_SessionReceits_Patient_PatId",
+                table: "SessionReceits",
                 column: "PatId",
                 principalTable: "Patient",
                 principalColumn: "Id",

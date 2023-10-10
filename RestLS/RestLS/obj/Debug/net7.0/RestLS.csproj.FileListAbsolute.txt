@@ -69,3 +69,5 @@ C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\Microsoft.Extensions.Dep
 C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\Mono.TextTemplating.dll
 C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\System.CodeDom.dll
 C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\BCrypt.Net-Next.dll
+C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\MySqlConnector.dll
+C:\Users\Lenovo\Saitynai\RestLS\RestLS\bin\Debug\net7.0\Pomelo.EntityFrameworkCore.MySql.dll

@@ -10,13 +10,20 @@ namespace RestLS.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.DropColumn(
+                name: "Name",
+                table: "Appointments");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.AddColumn<string>(
+                name: "Name",
+                table: "Appointments",
+                type: "longtext",
+                nullable: false)
+                .Annotation("MySql:CharSet", "utf8mb4");
         }
     }
 }

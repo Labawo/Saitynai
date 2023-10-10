@@ -61,7 +61,8 @@ public class PatientsController : ControllerBase
         {
             return NotFound();
         }
-        
+
+        patient.Name = updatePatientDto.Name;
         patient.Lastname = updatePatientDto.Lastname;
         patient.Email = updatePatientDto.Email;
         patient.PhoneNumb = updatePatientDto.Phone;

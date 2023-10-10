@@ -6,7 +6,7 @@ using RestLS.Data.Repositories;
 namespace RestLS.Controllers;
 
 [ApiController]
-[Route("api/doctors/{doctorId}/groupsession")]
+[Route("api/doctors/{doctorId}/groupsessions")]
 public class GroupSessionsController : ControllerBase
 {
     private readonly IDoctorsRepository _doctorsRepository;
@@ -21,7 +21,10 @@ public class GroupSessionsController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<GroupSessionDto>> GetMany(int doctorId)
     {
-        var gsessions = await _groupSessionsRepository.GetManyAsync(doctorId);
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return null;
+        
+        var gsessions = await _groupSessionsRepository.GetManyAsync(doctor.Id);
         return gsessions.Select(o => new GroupSessionDto(o.Id, o.Name, o.Doc.Id));
     }
 
@@ -29,7 +32,10 @@ public class GroupSessionsController : ControllerBase
     [HttpGet("{groupsessionId}", Name = "GetGroupSession")]
     public async Task<ActionResult<GroupSessionDto>> Get(int doctorId, int groupsessionId)
     {
-        var groupsession = await _groupSessionsRepository.GetAsync(doctorId, groupsessionId);
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
+        
+        var groupsession = await _groupSessionsRepository.GetAsync(doctor.Id, groupsessionId);
         if (groupsession == null) return NotFound();
 
         return Ok(new GroupSessionDto(groupsession.Id, groupsession.Name, groupsession.Doc.Id));
@@ -46,7 +52,7 @@ public class GroupSessionsController : ControllerBase
             Name = groupSessionDto.Name, Price = groupSessionDto.Price,
             Spaces = groupSessionDto.Spaces, Description = groupSessionDto.Description
         };
-        groupsession.Time = DateTime.ParseExact(groupSessionDto.Time, @"h\:m", null);
+        groupsession.Time = DateTime.Parse(groupSessionDto.Time);
         groupsession.Doc = doctor;
 
         await _groupSessionsRepository.CreateAsync(groupsession);
@@ -69,7 +75,7 @@ public class GroupSessionsController : ControllerBase
         oldGroupSession.Spaces = updateGroupSessionDto.Spaces;
         oldGroupSession.Price = updateGroupSessionDto.Price;
         oldGroupSession.Description = updateGroupSessionDto.Description;
-        oldGroupSession.Time = DateTime.ParseExact(updateGroupSessionDto.Time, @"h\:m", null);
+        oldGroupSession.Time = DateTime.Parse(updateGroupSessionDto.Time);
 
         await _groupSessionsRepository.UpdateAsync(oldGroupSession);
 

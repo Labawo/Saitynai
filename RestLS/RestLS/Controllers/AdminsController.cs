@@ -60,7 +60,8 @@ public class AdminsController : ControllerBase
         {
             return NotFound();
         }
-        
+
+        admin.Name = updateAdminDto.Name;
         admin.Lastname = updateAdminDto.Lastname;
         
         await _adminsRepository.UpdateAsync(admin);

@@ -21,18 +21,24 @@ public class AppointmentController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<AppointmentDto>> GetMany(int doctorId)
     {
-        var appoitments = await _appointmentRepository.GetManyAsync(doctorId);
-        return appoitments.Select(o => new AppointmentDto(o.ID, o.Name));
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return null;
+        
+        var appoitments = await _appointmentRepository.GetManyAsync(doctor.Id);
+        return appoitments.Select(o => new AppointmentDto(o.ID, o.Time, o.Price, o.Doc.Id));
     }
 
     // /api/topics/1/posts/2
-    [HttpGet("{appointmentId}", Name = "GetAppointment")]
-    public async Task<ActionResult<AppointmentDto>> Get(int doctorId, int appointmentId)
+    [HttpGet("{appoitmentId}", Name = "GetAppointment")]
+    public async Task<ActionResult<AppointmentDto>> Get(int doctorId, int appoitmentId)
     {
-        var appointment = await _appointmentRepository.GetAsync(doctorId, appointmentId);
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
+        
+        var appointment = await _appointmentRepository.GetAsync(doctor.Id, appoitmentId);
         if (appointment == null) return NotFound();
 
-        return Ok(new AppointmentDto(appointment.ID, appointment.Name));
+        return Ok(new AppointmentDto(appointment.ID, appointment.Time, appointment.Price, appointment.Doc.Id));
     }
 
     [HttpPost]
@@ -41,7 +47,7 @@ public class AppointmentController : ControllerBase
         var doctor = await _doctorsRepository.GetAsync(doctorId);
         if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
 
-        var appoitment = new Appointment{Name = appoitmentDto.Name, Price = appoitmentDto.Price};
+        var appoitment = new Appointment{Price = appoitmentDto.Price};
         appoitment.Doc = doctor;
         appoitment.AppointmentDate = DateTime.Now;
         appoitment.IsAvailable = true;
@@ -50,7 +56,7 @@ public class AppointmentController : ControllerBase
 
         await _appointmentRepository.CreateAsync(appoitment);
 
-        return Created("GetAppointment", new AppointmentDto(appoitment.ID, appoitment.Name));
+        return Created("GetAppointment", new AppointmentDto(appoitment.ID, appoitment.Time, appoitment.Price, appoitment.Doc.Id));
     }
 
     [HttpPut("{appoitmentId}")]
@@ -64,13 +70,12 @@ public class AppointmentController : ControllerBase
             return NotFound();
 
         //oldPost.Body = postDto.Body;
-        oldAppoitment.Name = updateappoitmentDto.Name;
         oldAppoitment.Price = updateappoitmentDto.Price;
         oldAppoitment.Time = DateTime.Parse(updateappoitmentDto.Time);
 
         await _appointmentRepository.UpdateAsync(oldAppoitment);
 
-        return Ok(new AppointmentTimeDto(oldAppoitment.ID, oldAppoitment.Name, oldAppoitment.Time));
+        return Ok(new AppointmentDto(oldAppoitment.ID, oldAppoitment.Time, oldAppoitment.Price, oldAppoitment.Doc.Id));
     }
 
     [HttpDelete("{appoitmentId}")]

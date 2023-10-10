@@ -54,7 +54,7 @@ public class DoctorsController : ControllerBase
         
         Response.Headers.Add("Pagination", JsonSerializer.Serialize(paginationMetaData));
 
-        return doctors.Select(o => new DoctorDto(o.Id, o.Name, o.Lastname));
+        return doctors.Select(o => new DoctorDto(o.Id, o.Name, o.Lastname, o.PhoneNumb, o.Email));
     }
     
     // api/doctors/{doctorID}
@@ -71,7 +71,7 @@ public class DoctorsController : ControllerBase
 
         var links = CreateLinksForDoctors(doctorId);
 
-        var doctorDto = new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname);
+        var doctorDto = new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.PhoneNumb, doctor.Email);
         
         return Ok(new { Resource = doctorDto, Links = links});
     }
@@ -86,7 +86,7 @@ public class DoctorsController : ControllerBase
         await _doctorsRepository.CreateAsync(doctor);
         
         //201
-        return Created("", new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname));
+        return Created("", new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.PhoneNumb, doctor.Email));
         //return CreatedAtAction("GetDoctor", new { doctorId = doctor.Id }, new DoctorDto(doctor.Name, doctor.Lastname, doctor.Description));
     }
     
@@ -100,14 +100,15 @@ public class DoctorsController : ControllerBase
         {
             return NotFound();
         }
-        
+
+        doctor.Name = updateDoctorDto.Name;
         doctor.Lastname = updateDoctorDto.LastName;
         doctor.Email = updateDoctorDto.Email;
         doctor.PhoneNumb = updateDoctorDto.PhoneNumb;
         
         await _doctorsRepository.UpdateAsync(doctor);
 
-        return Ok(new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname));
+        return Ok(new DoctorDto(doctor.Id, doctor.Name, doctor.Lastname, doctor.PhoneNumb, doctor.Email));
     }
     
     [HttpDelete("{doctorID}", Name = "DeleteDoctor")]

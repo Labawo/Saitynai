@@ -24,18 +24,29 @@ public class RecomendationsController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<RecomendationDto>> GetMany(int doctorId, int appointmentId)
     {
-        var recomendations = await _recomendationsRepository.GetManyAsync(doctorId, appointmentId);
-        return recomendations.Select(o => new RecomendationDto(o.ID, o.Name, o.Description));
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return null;
+        
+        var appointment = await _appointmentRepository.GetAsync(doctor.Id, appointmentId);
+        if (appointment == null) return null;
+        var recomendations = await _recomendationsRepository.GetManyAsync(doctor.Id, appointment.ID);
+        return recomendations.Select(o => new RecomendationDto(o.ID, o.Description));
     }
 
     // /api/topics/1/posts/2
     [HttpGet("{recomendationId}", Name = "GetRecomendation")]
     public async Task<ActionResult<RecomendationDto>> Get(int doctorId, int appointmentId, int recomendationId)
     {
-        var recomendation = await _recomendationsRepository.GetAsync(doctorId, appointmentId, recomendationId);
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
+        
+        var appointment = await _appointmentRepository.GetAsync(doctor.Id, appointmentId);
+        if (appointment == null) return NotFound($"Couldn't find an appointment with id of {appointmentId}");
+        
+        var recomendation = await _recomendationsRepository.GetAsync(doctor.Id, appointment.ID, recomendationId);
         if (recomendation == null) return NotFound();
 
-        return Ok(new RecomendationDto(recomendation.ID, recomendation.Name, recomendation.Description));
+        return Ok(new RecomendationDto(recomendation.ID, recomendation.Description));
     }
 
     [HttpPost]
@@ -47,13 +58,13 @@ public class RecomendationsController : ControllerBase
         var appointment = await _appointmentRepository.GetAsync(doctorId, appointmentId);
         if (appointment == null) return NotFound($"Couldn't find an appointment with id of {appointmentId}");
 
-        var recomendation = new Recomendation{Name = recomendationDto.Name, Description = recomendationDto.Description};
+        var recomendation = new Recomendation{Description = recomendationDto.Description};
         recomendation.Appoint = appointment;
         recomendation.RecomendationDate = DateTime.Now;
 
         await _recomendationsRepository.CreateAsync(recomendation);
 
-        return Created("GetRecomendation", new RecomendationDto(recomendation.ID, recomendation.Name, recomendation.Description));
+        return Created("GetRecomendation", new RecomendationDto(recomendation.ID, recomendation.Description));
     }
 
     [HttpPut("{recomendationId}")]
@@ -70,12 +81,11 @@ public class RecomendationsController : ControllerBase
             return NotFound();
 
         //oldPost.Body = postDto.Body;
-        oldRecomendation.Name = updaterecomendationDto.Name;
         oldRecomendation.Description = updaterecomendationDto.Description;
 
         await _recomendationsRepository.UpdateAsync(oldRecomendation);
 
-        return Ok(new RecomendationDto(oldRecomendation.ID, oldRecomendation.Name, oldRecomendation.Description));
+        return Ok(new RecomendationDto(oldRecomendation.ID, oldRecomendation.Description));
     }
 
     [HttpDelete("{recomendationId}")]

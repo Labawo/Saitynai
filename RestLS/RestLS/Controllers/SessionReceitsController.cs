@@ -6,7 +6,7 @@ using RestLS.Data.Repositories;
 namespace RestLS.Controllers;
 
 [ApiController]
-[Route("api/doctors/{doctorId}/groupsessions/{groupSessionId}/sessionreceits")]
+[Route("api/doctors/{doctorId}/groupsessions/{groupSessionId}/receits")]
 public class SessionReceitsController : ControllerBase
 {
     private readonly IDoctorsRepository _doctorsRepository;
@@ -23,7 +23,13 @@ public class SessionReceitsController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<SessionReceitDto>> GetMany(int doctorId, int groupSessionId)
     {
-        var sessionReceits = await _sessionReceitsRepository.GetManyAsync(doctorId, groupSessionId);
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return null;
+        
+        var groupSession = await _groupSessionsRepository.GetAsync(doctor.Id, groupSessionId);
+        if (groupSession == null) return null;
+        
+        var sessionReceits = await _sessionReceitsRepository.GetManyAsync(doctor.Id, groupSession.Id);
         return sessionReceits.Select(o => new SessionReceitDto(o.Id, o.GroupSes.Id));
     }
 
@@ -31,7 +37,13 @@ public class SessionReceitsController : ControllerBase
     [HttpGet("{sessionReceitId}", Name = "GetReceit")]
     public async Task<ActionResult<SessionReceitDto>> Get(int doctorId, int groupSessionId, int sessionReceitId)
     {
-        var sessionReceit = await _sessionReceitsRepository.GetAsync(doctorId, groupSessionId, sessionReceitId);
+        var doctor = await _doctorsRepository.GetAsync(doctorId);
+        if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
+        
+        var groupSession = await _groupSessionsRepository.GetAsync(doctor.Id, groupSessionId);
+        if (groupSession == null) return NotFound($"Couldn't find an group session with id of {groupSessionId}");
+        
+        var sessionReceit = await _sessionReceitsRepository.GetAsync(doctor.Id, groupSession.Id, sessionReceitId);
         if (sessionReceit == null) return NotFound();
 
         return Ok(new SessionReceitDto(sessionReceit.Id, sessionReceit.GroupSes.Id));

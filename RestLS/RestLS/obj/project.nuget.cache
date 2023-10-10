@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "cwIofOPMtcvzS7J553zO0oXN4h2jrJSwjN6Lg6XW49hmieDNYdys1Q3xHYjHzwQ3aHDryt+YkLPE8OwNWIZt/Q==",
+  "dgSpecHash": "APURndEPz/b5QTRyrlzFw2nWff0NOflxhvK/kMlM2WIg+x4NiIzc2osMGdvP2olZMzqjTbNagkeHe5gojv4Oyw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Lenovo\\Saitynai\\RestLS\\RestLS\\RestLS.csproj",
   "expectedPackageFiles": [
@@ -42,6 +42,8 @@
     "C:\\Users\\Lenovo\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\Lenovo\\.nuget\\packages\\mysqlconnector\\2.2.5\\mysqlconnector.2.2.5.nupkg.sha512",
+    "C:\\Users\\Lenovo\\.nuget\\packages\\pomelo.entityframeworkcore.mysql\\7.0.0\\pomelo.entityframeworkcore.mysql.7.0.0.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\system.codedom\\4.4.0\\system.codedom.4.4.0.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\system.configuration.configurationmanager\\6.0.1\\system.configuration.configurationmanager.6.0.1.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.0\\system.diagnostics.diagnosticsource.6.0.0.nupkg.sha512",
