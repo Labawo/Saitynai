@@ -119,6 +119,7 @@ public class DoctorsController : ControllerBase
 
         doctor.Name = updateDoctorDto.Name;
         doctor.Lastname = updateDoctorDto.LastName;
+        
         var patient = await _patientsRepository.GetAsync(updateDoctorDto.PhoneNumb);
         if (patient != null)
         {

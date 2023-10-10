@@ -6,6 +6,7 @@ namespace RestLS.Data.Repositories;
 public interface IAppointmentsRepository
 {
     Task<Appointment?> GetAsync(int doctorId, int appointmentId);
+    Task<Appointment?> GetAsync(int doctorId, DateTime date);
     Task<IReadOnlyList<Appointment>> GetManyAsync(int doctorId);
     Task CreateAsync(Appointment appointment);
     Task UpdateAsync(Appointment appointment);
@@ -24,6 +25,11 @@ public class AppointmentsRepository : IAppointmentsRepository
     public async Task<Appointment?> GetAsync(int doctorId, int appointmentId)
     {
         return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.ID == appointmentId && o.Doc.Id == doctorId);
+    }
+    
+    public async Task<Appointment?> GetAsync(int doctorId, DateTime date)
+    {
+        return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.Time <= date && o.Time.AddHours(1) >= date && o.Doc.Id == doctorId);
     }
 
     public async Task<IReadOnlyList<Appointment>> GetManyAsync(int doctorId)

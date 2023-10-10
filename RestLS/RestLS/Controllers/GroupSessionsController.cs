@@ -11,11 +11,13 @@ public class GroupSessionsController : ControllerBase
 {
     private readonly IDoctorsRepository _doctorsRepository;
     private readonly IGroupSessionsRepository _groupSessionsRepository;
+    private readonly IAppointmentsRepository _appointmentRepository;
 
-    public GroupSessionsController(IGroupSessionsRepository groupSessionsRepository, IDoctorsRepository doctorsRepository)
+    public GroupSessionsController(IGroupSessionsRepository groupSessionsRepository, IDoctorsRepository doctorsRepository, IAppointmentsRepository appointmentRepository)
     {
         _groupSessionsRepository = groupSessionsRepository;
         _doctorsRepository = doctorsRepository;
+        _appointmentRepository = appointmentRepository;
     }
     
     [HttpGet]
@@ -54,6 +56,18 @@ public class GroupSessionsController : ControllerBase
         };
         groupsession.Time = DateTime.Parse(groupSessionDto.Time);
         groupsession.Doc = doctor;
+        
+        var existingGroupSession = await _groupSessionsRepository.GetAsync(doctor.Id, groupsession.Time);
+        if (existingGroupSession != null)
+        {
+            return Conflict("Group session at this time already exists.");
+        }
+        
+        var existingAppointment = await _appointmentRepository.GetAsync(doctor.Id, groupsession.Time);
+        if (existingAppointment != null)
+        {
+            return Conflict("Appointment at this time already exists.");
+        }
 
         await _groupSessionsRepository.CreateAsync(groupsession);
 
@@ -75,7 +89,25 @@ public class GroupSessionsController : ControllerBase
         oldGroupSession.Spaces = updateGroupSessionDto.Spaces;
         oldGroupSession.Price = updateGroupSessionDto.Price;
         oldGroupSession.Description = updateGroupSessionDto.Description;
-        oldGroupSession.Time = DateTime.Parse(updateGroupSessionDto.Time);
+        
+
+        if (oldGroupSession.Time != DateTime.Parse(updateGroupSessionDto.Time))
+        {
+            oldGroupSession.Time = DateTime.Parse(updateGroupSessionDto.Time);
+            var existingGroupSession = await _groupSessionsRepository.GetAsync(doctor.Id, oldGroupSession.Time);
+            if (existingGroupSession != null)
+            {
+                return Conflict("Group session at this time already exists.");
+            }
+        
+            var existingAppointment = await _appointmentRepository.GetAsync(doctor.Id, oldGroupSession.Time);
+            if (existingAppointment != null)
+            {
+                return Conflict("Appointment at this time already exists.");
+            }
+        }
+
+        
 
         await _groupSessionsRepository.UpdateAsync(oldGroupSession);
 

@@ -7,6 +7,7 @@ namespace RestLS.Data.Repositories;
 public interface IGroupSessionsRepository
 {
     Task<GroupSession?> GetAsync(int doctorId, int groupSessionId);
+    Task<GroupSession?> GetAsync(int doctorId, DateTime time);
     Task<IReadOnlyList<GroupSession>> GetManyAsync(int doctorId);
     Task CreateAsync(GroupSession groupSession);
     Task UpdateAsync(GroupSession groupSession);
@@ -25,6 +26,11 @@ public class GroupSessionsRepository : IGroupSessionsRepository
     public async Task<GroupSession?> GetAsync(int doctorId, int groupSessionId)
     {
         return await _lsDbContext.GroupSessions.FirstOrDefaultAsync(o => o.Id == groupSessionId && o.Doc.Id == doctorId);
+    }
+    
+    public async Task<GroupSession?> GetAsync(int doctorId, DateTime date)
+    {
+        return await _lsDbContext.GroupSessions.FirstOrDefaultAsync(o => o.Time <= date && o.Time.AddHours(1) >= date && o.Doc.Id == doctorId);
     }
 
     public async Task<IReadOnlyList<GroupSession>> GetManyAsync(int doctorId)
