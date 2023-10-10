@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Runtime.InteropServices.JavaScript;
+using Microsoft.AspNetCore.Mvc;
 using RestLS.Data.Dtos.SessionReceits;
 using RestLS.Data.Entities;
 using RestLS.Data.Repositories;
@@ -63,9 +64,17 @@ public class SessionReceitsController : ControllerBase
         sessionReceit.Time = DateTime.Now;
         sessionReceit.Price = groupSession.Price * createSessionReceitDto.Quantity;
 
-        await _sessionReceitsRepository.CreateAsync(sessionReceit);
+        if (groupSession.Spaces >= createSessionReceitDto.Quantity)
+        {
+            groupSession.Spaces -= createSessionReceitDto.Quantity;
+            await _groupSessionsRepository.UpdateAsync(groupSession);
 
-        return Created("GetReceit", new SessionReceitDto(sessionReceit.Id, sessionReceit.GroupSes.Id));
+            await _sessionReceitsRepository.CreateAsync(sessionReceit);
+
+            return Created("GetReceit", new SessionReceitDto(sessionReceit.Id, sessionReceit.GroupSes.Id));
+        }
+
+        return BadRequest("Can't choose bigger quantity than available spaces.");
     }
 
     [HttpDelete("{sessionReceitId}")]
