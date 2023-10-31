@@ -12,7 +12,7 @@ Vartotojų tipai:
 3. Psichologas.
 4. Administratorius.
 
-Objektai: Psichologas – vizitas – vizito aprašymas.
+Objektai: Terapija – Vizitas – Vizito aprašymas.
 
   ## 1.2.	Funkciniai reikalavimai
 
@@ -32,19 +32,13 @@ Psichologai galės:
 2.	Matyti vizitų planą.
 3.	Kurti vizito su pacientu aprašymą.
 4.	Redaguoti vizito su pacientu aprašymą.
-5.	Kurti terapinius seansus
+5.	Kurti terapinijas
     - Įkelti nuotrauką
     - Pateikti aprašymą
-    - Nurodyti kiek yra galimų vietų
-    - Nurodyti seanso kainą
 7.	Redaguoti profilį.
 
 Administratorius galės:
 1.	Patvirtinti vartotojo registraciją.
 2.	Patvirtinti psichologo registraciją.
 3.	Šalinti vartotojus.
-4.	Keisti psichologų galimų vizitų skaičių ir laiką.
-5.	Valdyti terapijų kategorijas
-    - Pridėti naują terapijos kategoriją
-    - Redaguoti esamą terapijos kategoriją
-    - Naikinti esamą terapijos kategoriją
+4.	Keisti psichologų ir pacientų galimų vizitų skaičių ir laiką.
