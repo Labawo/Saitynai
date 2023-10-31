@@ -5,8 +5,8 @@ namespace RestLS.Data.Repositories;
 
 public interface IRecomendationsRepository
 {
-    Task<Recomendation?> GetAsync(int doctorId, int appointmentId, int recomendationId);
-    Task<IReadOnlyList<Recomendation>> GetManyAsync(int doctorId, int appointmentId);
+    Task<Recomendation?> GetAsync(int therapyId, int appointmentId, int recomendationId);
+    Task<IReadOnlyList<Recomendation>> GetManyAsync(int therapyId, int appointmentId);
     Task CreateAsync(Recomendation recomendation);
     Task UpdateAsync(Recomendation recomendation);
     Task RemoveAsync(Recomendation recomendation);
@@ -21,14 +21,14 @@ public class RecomendationsRepository : IRecomendationsRepository
         _lsDbContext = lsDbContext;
     }
 
-    public async Task<Recomendation?> GetAsync(int doctorId, int appointmentId, int recomendationId)
+    public async Task<Recomendation?> GetAsync(int therapyId, int appointmentId, int recomendationId)
     {
-        return await _lsDbContext.Recomendations.FirstOrDefaultAsync(o => o.ID == recomendationId && o.Appoint.ID == appointmentId && o.Appoint.Doc.Id == doctorId);
+        return await _lsDbContext.Recomendations.FirstOrDefaultAsync(o => o.ID == recomendationId && o.Appoint.ID == appointmentId && o.Appoint.Therapy.Id == therapyId);
     }
 
-    public async Task<IReadOnlyList<Recomendation>> GetManyAsync(int doctorId, int appointmentId)
+    public async Task<IReadOnlyList<Recomendation>> GetManyAsync(int therapyId, int appointmentId)
     {
-        return await _lsDbContext.Recomendations.Where(o => o.Appoint.Doc.Id == doctorId && o.Appoint.ID == appointmentId).ToListAsync();
+        return await _lsDbContext.Recomendations.Where(o => o.Appoint.Therapy.Id == therapyId && o.Appoint.ID == appointmentId).ToListAsync();
     }
 
     public async Task CreateAsync(Recomendation recomendation)

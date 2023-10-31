@@ -1,6 +1,6 @@
-﻿namespace RestLS.Data.Dtos.Doctors;
+﻿namespace RestLS.Data.Dtos.Therapies;
 
-public class DoctorSearchParameters
+public class TherapySearchParameters
 {
     private int _pageSize = 2;
     private const int MaxPageSize = 50;

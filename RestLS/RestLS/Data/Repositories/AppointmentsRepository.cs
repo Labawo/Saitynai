@@ -5,9 +5,9 @@ namespace RestLS.Data.Repositories;
 
 public interface IAppointmentsRepository
 {
-    Task<Appointment?> GetAsync(int doctorId, int appointmentId);
-    Task<Appointment?> GetAsync(int doctorId, DateTime date);
-    Task<IReadOnlyList<Appointment>> GetManyAsync(int doctorId);
+    Task<Appointment?> GetAsync(int therapyId, int appointmentId);
+    Task<Appointment?> GetAsync(int therapyId, DateTime date);
+    Task<IReadOnlyList<Appointment>> GetManyAsync(int therapyId);
     Task CreateAsync(Appointment appointment);
     Task UpdateAsync(Appointment appointment);
     Task RemoveAsync(Appointment appointment);
@@ -22,19 +22,19 @@ public class AppointmentsRepository : IAppointmentsRepository
         _lsDbContext = lsDbContext;
     }
     
-    public async Task<Appointment?> GetAsync(int doctorId, int appointmentId)
+    public async Task<Appointment?> GetAsync(int therapyId, int appointmentId)
     {
-        return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.ID == appointmentId && o.Doc.Id == doctorId);
+        return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.ID == appointmentId && o.Therapy.Id == therapyId);
     }
     
-    public async Task<Appointment?> GetAsync(int doctorId, DateTime date)
+    public async Task<Appointment?> GetAsync(int therapyId, DateTime date)
     {
-        return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.Time <= date && o.Time.AddHours(1) >= date && o.Doc.Id == doctorId);
+        return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.Time <= date && o.Time.AddHours(1) >= date && o.Therapy.Id == therapyId);
     }
 
-    public async Task<IReadOnlyList<Appointment>> GetManyAsync(int doctorId)
+    public async Task<IReadOnlyList<Appointment>> GetManyAsync(int therapyId)
     {
-        return await _lsDbContext.Appointments.Where(o => o.Doc.Id == doctorId).ToListAsync();
+        return await _lsDbContext.Appointments.Where(o => o.Therapy.Id == therapyId).ToListAsync();
     }
     
     public async Task CreateAsync(Appointment appointment)

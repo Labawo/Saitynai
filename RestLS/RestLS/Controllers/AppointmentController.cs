@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections;
+using Microsoft.AspNetCore.Mvc;
 using RestLS.Data.Dtos.Appoitments;
 using RestLS.Data.Repositories;
 using RestLS.Data.Entities;
@@ -6,79 +7,71 @@ using RestLS.Data.Entities;
 namespace RestLS.Controllers;
 
 [ApiController]
-[Route("api/doctors/{doctorId}/appointments")]
+[Route("api/therapies/{therapyId}/appointments")]
 public class AppointmentController : ControllerBase
 {
-    private readonly IDoctorsRepository _doctorsRepository;
+    private readonly ITherapiesRepository _therapiesRepository;
     private readonly IAppointmentsRepository _appointmentRepository;
-    private readonly IGroupSessionsRepository _groupSessionsRepository;
 
-    public AppointmentController(IAppointmentsRepository appointmentRepository, IDoctorsRepository doctorsRepository, IGroupSessionsRepository groupSessionsRepository)
+    public AppointmentController(IAppointmentsRepository appointmentRepository, ITherapiesRepository therapiesRepository)
     {
         _appointmentRepository = appointmentRepository;
-        _doctorsRepository = doctorsRepository;
-        _groupSessionsRepository = groupSessionsRepository;
+        _therapiesRepository = therapiesRepository;
     }
     
     [HttpGet]
-    public async Task<IEnumerable<AppointmentDto>> GetMany(int doctorId)
+    public async Task<IEnumerable<AppointmentDto>> GetMany(int therapyId)
     {
-        var doctor = await _doctorsRepository.GetAsync(doctorId);
-        if (doctor == null) return null;
+        var therapy = await _therapiesRepository.GetAsync(therapyId);
+        if (therapy == null) return new List<AppointmentDto>();
         
-        var appoitments = await _appointmentRepository.GetManyAsync(doctor.Id);
-        return appoitments.Select(o => new AppointmentDto(o.ID, o.Time, o.Price, o.Doc.Id));
+        var appoitments = await _appointmentRepository.GetManyAsync(therapy.Id);
+        return appoitments.Select(o => new AppointmentDto(o.ID, o.Time, o.Price, o.Therapy.Id));
     }
 
     // /api/topics/1/posts/2
     [HttpGet("{appoitmentId}", Name = "GetAppointment")]
-    public async Task<ActionResult<AppointmentDto>> Get(int doctorId, int appoitmentId)
+    public async Task<ActionResult<AppointmentDto>> Get(int therapyId, int appoitmentId)
     {
-        var doctor = await _doctorsRepository.GetAsync(doctorId);
-        if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
+        var therapy = await _therapiesRepository.GetAsync(therapyId);
+        if (therapy == null) return NotFound($"Couldn't find a therapy with id of {therapyId}");
         
-        var appointment = await _appointmentRepository.GetAsync(doctor.Id, appoitmentId);
+        var appointment = await _appointmentRepository.GetAsync(therapy.Id, appoitmentId);
         if (appointment == null) return NotFound();
 
-        return Ok(new AppointmentDto(appointment.ID, appointment.Time, appointment.Price, appointment.Doc.Id));
+        return Ok(new AppointmentDto(appointment.ID, appointment.Time, appointment.Price, appointment.Therapy.Id));
     }
 
     [HttpPost]
-    public async Task<ActionResult<AppointmentDto>> Create(int doctorId, CreateAppointmentDto appoitmentDto)
+    public async Task<ActionResult<AppointmentDto>> Create(int therapyId, CreateAppointmentDto appoitmentDto)
     {
-        var doctor = await _doctorsRepository.GetAsync(doctorId);
-        if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
+        var therapy = await _therapiesRepository.GetAsync(therapyId);
+        if (therapy == null) return NotFound($"Couldn't find a therapy with id of {therapyId}");
 
         var appoitment = new Appointment{Price = appoitmentDto.Price};
-        appoitment.Doc = doctor;
+        appoitment.Therapy = therapy;
         appoitment.AppointmentDate = DateTime.Now;
         appoitment.IsAvailable = true;
         appoitment.Time = DateTime.Parse(appoitmentDto.Time);
 
-        var existingAppointment = await _appointmentRepository.GetAsync(doctor.Id, appoitment.Time);
+        var existingAppointment = await _appointmentRepository.GetAsync(therapy.Id, appoitment.Time);
         if (existingAppointment != null)
         {
             return Conflict("Appointment at this time already exists.");
         }
-        
-        var existingGroupSession = await _groupSessionsRepository.GetAsync(doctor.Id, appoitment.Time);
-        if (existingGroupSession != null)
-        {
-            return Conflict("Group session at this time already exists.");
-        }
 
         await _appointmentRepository.CreateAsync(appoitment);
 
-        return Created("GetAppointment", new AppointmentDto(appoitment.ID, appoitment.Time, appoitment.Price, appoitment.Doc.Id));
+        return Created("GetAppointment", new AppointmentDto(appoitment.ID, appoitment.Time, appoitment.Price, appoitment.Therapy.Id));
     }
 
     [HttpPut("{appoitmentId}")]
-    public async Task<ActionResult<AppointmentDto>> Update(int doctorId, int appoitmentId, UpdateAppointmentDto updateappoitmentDto)
+    public async Task<ActionResult<AppointmentDto>> Update(int therapyId, int appoitmentId, UpdateAppointmentDto updateappoitmentDto)
     {
-        var doctor = await _doctorsRepository.GetAsync(doctorId);
-        if (doctor == null) return NotFound($"Couldn't find a doctor with id of {doctorId}");
+        var therapy = await _therapiesRepository.GetAsync(therapyId);
+        if (therapy == null) return NotFound($"Couldn't find a therapy with id of {therapyId}");
 
-        var oldAppoitment = await _appointmentRepository.GetAsync(doctorId, appoitmentId);
+        var oldAppoitment = await _appointmentRepository.GetAsync(therapyId, appoitmentId);
         if (oldAppoitment == null)
             return NotFound();
 
@@ -90,16 +83,10 @@ public class AppointmentController : ControllerBase
         {
             oldAppoitment.Time = DateTime.Parse(updateappoitmentDto.Time);
             
-            var existingAppointment = await _appointmentRepository.GetAsync(doctor.Id, oldAppoitment.Time);
+            var existingAppointment = await _appointmentRepository.GetAsync(therapy.Id, oldAppoitment.Time);
             if (existingAppointment != null)
             {
                 return Conflict("Appointment at this time already exists.");
-            }
-        
-            var existingGroupSession = await _groupSessionsRepository.GetAsync(doctor.Id, oldAppoitment.Time);
-            if (existingGroupSession != null)
-            {
-                return Conflict("Group session at this time already exists.");
             }
         }
         
@@ -107,13 +94,13 @@ public class AppointmentController : ControllerBase
 
         await _appointmentRepository.UpdateAsync(oldAppoitment);
 
-        return Ok(new AppointmentDto(oldAppoitment.ID, oldAppoitment.Time, oldAppoitment.Price, oldAppoitment.Doc.Id));
+        return Ok(new AppointmentDto(oldAppoitment.ID, oldAppoitment.Time, oldAppoitment.Price, oldAppoitment.Therapy.Id));
     }
 
     [HttpDelete("{appoitmentId}")]
-    public async Task<ActionResult> Remove(int doctorId, int appoitmentId)
+    public async Task<ActionResult> Remove(int therapyId, int appoitmentId)
     {
-        var appoitment = await _appointmentRepository.GetAsync(doctorId, appoitmentId);
+        var appoitment = await _appointmentRepository.GetAsync(therapyId, appoitmentId);
         if (appoitment == null)
             return NotFound();
 

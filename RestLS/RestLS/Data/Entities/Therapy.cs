@@ -1,8 +1,8 @@
 ﻿namespace RestLS.Data.Entities;
 
-public class Admin
+public class Therapy
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    public string Lastname { get; set; }
+    public string Description { get; set; }
 }
