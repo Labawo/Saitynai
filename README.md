@@ -32,7 +32,7 @@ Psichologai galės:
 2.	Matyti vizitų planą.
 3.	Kurti vizito su pacientu aprašymą.
 4.	Redaguoti vizito su pacientu aprašymą.
-5.	Kurti terapinijas
+5.	Kurti terapijas
     - Įkelti nuotrauką
     - Pateikti aprašymą
 7.	Redaguoti profilį.
