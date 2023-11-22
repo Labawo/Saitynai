@@ -1,5 +1,10 @@
-﻿using System.Text.Json;
+﻿using System.Security.Claims;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
+using RestLS.Auth.Models;
 using RestLS.Data;
 using RestLS.Data.Dtos.Therapies;
 using RestLS.Data.Entities;
@@ -12,10 +17,12 @@ namespace RestLS.Controllers;
 public class TherapiesController : ControllerBase
 {
     private readonly ITherapiesRepository _therapiesRepository;
+    private readonly IAuthorizationService _authorizationService;
 
-    public TherapiesController(ITherapiesRepository therapiesRepository)
+    public TherapiesController(ITherapiesRepository therapiesRepository, IAuthorizationService authorizationService)
     {
         _therapiesRepository = therapiesRepository;
+        _authorizationService = authorizationService;
     }
     
     [HttpGet(Name = "GetTherapies")]
@@ -68,9 +75,15 @@ public class TherapiesController : ControllerBase
     }
     
     [HttpPost]
+    [Authorize(Roles = ClinicRoles.Doctor)]
     public async Task<ActionResult<TherapyDto>> Create(CreateTherapyDto createTherapyDto)
     {
-        var therapy = new Therapy{Name = createTherapyDto.Name, Description = createTherapyDto.Description};
+        var therapy = new Therapy
+        {
+            Name = createTherapyDto.Name, 
+            Description = createTherapyDto.Description,
+            DoctorId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+        };
         
         await _therapiesRepository.CreateAsync(therapy);
         
@@ -82,6 +95,7 @@ public class TherapiesController : ControllerBase
     
     [HttpPut]
     [Route("{therapyId}")]
+    [Authorize(Roles = ClinicRoles.Doctor + "," + ClinicRoles.Admin)]
     public async Task<ActionResult<TherapyDto>> Update(int therapyId, UpdateTherapyDto updateTherapyDto)
     {
         var therapy = await _therapiesRepository.GetAsync(therapyId);
@@ -90,7 +104,16 @@ public class TherapiesController : ControllerBase
         {
             return NotFound();
         }
+        
+        var authorizationResult = await _authorizationService.AuthorizeAsync(User, therapy, PolicyNames.ResourceOwner);
 
+        if (!User.IsInRole(ClinicRoles.Admin))
+        {
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
+        }
         therapy.Name = updateTherapyDto.Name;
         therapy.Description = updateTherapyDto.Description;
         
@@ -100,6 +123,7 @@ public class TherapiesController : ControllerBase
     }
     
     [HttpDelete("{therapyId}", Name = "DeleteTherapy")]
+    [Authorize(Roles = ClinicRoles.Doctor + "," + ClinicRoles.Admin)]
     public async Task<ActionResult> Remove(int therapyId)
     {
         var therapy = await _therapiesRepository.GetAsync(therapyId);
@@ -108,6 +132,17 @@ public class TherapiesController : ControllerBase
         {
             return NotFound();
         }
+        
+        var authorizationResult = await _authorizationService.AuthorizeAsync(User, therapy, PolicyNames.ResourceOwner);
+
+        if (!User.IsInRole(ClinicRoles.Admin))
+        {
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
+        }
+        
 
         await _therapiesRepository.RemoveAsync(therapy);
         

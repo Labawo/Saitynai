@@ -4,6 +4,5 @@ namespace RestLS.Auth.Models;
 
 public class ClinicUser : IdentityUser
 {
-    //[PersonalData]
-    //public bool? IsVerified { get; set; }
+    public bool ForceRelogin { get; set; }
 }

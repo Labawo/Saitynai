@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RestLS.Auth.Models;
 using RestLS.Data.Dtos.Appoitments;
 using RestLS.Data.Repositories;
 using RestLS.Data.Entities;
@@ -12,11 +14,13 @@ public class AppointmentController : ControllerBase
 {
     private readonly ITherapiesRepository _therapiesRepository;
     private readonly IAppointmentsRepository _appointmentRepository;
+    private readonly IAuthorizationService _authorizationService;
 
-    public AppointmentController(IAppointmentsRepository appointmentRepository, ITherapiesRepository therapiesRepository)
+    public AppointmentController(IAppointmentsRepository appointmentRepository, ITherapiesRepository therapiesRepository, IAuthorizationService authorizationService)
     {
         _appointmentRepository = appointmentRepository;
         _therapiesRepository = therapiesRepository;
+        _authorizationService = authorizationService;
     }
     
     [HttpGet]
@@ -43,11 +47,22 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = ClinicRoles.Doctor + "," + ClinicRoles.Admin)]
     public async Task<ActionResult<AppointmentDto>> Create(int therapyId, CreateAppointmentDto appoitmentDto)
     {
         var therapy = await _therapiesRepository.GetAsync(therapyId);
         if (therapy == null) return NotFound($"Couldn't find a therapy with id of {therapyId}");
+        
+        var authorizationResult = await _authorizationService.AuthorizeAsync(User, therapy, PolicyNames.ResourceOwner);
 
+        if (!User.IsInRole(ClinicRoles.Admin))
+        {
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
+        }
+        
         var appoitment = new Appointment{Price = appoitmentDto.Price};
         appoitment.Therapy = therapy;
         appoitment.AppointmentDate = DateTime.Now;
@@ -66,10 +81,21 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpPut("{appoitmentId}")]
+    [Authorize(Roles = ClinicRoles.Doctor + "," + ClinicRoles.Admin)]
     public async Task<ActionResult<AppointmentDto>> Update(int therapyId, int appoitmentId, UpdateAppointmentDto updateappoitmentDto)
     {
         var therapy = await _therapiesRepository.GetAsync(therapyId);
         if (therapy == null) return NotFound($"Couldn't find a therapy with id of {therapyId}");
+        
+        var authorizationResult = await _authorizationService.AuthorizeAsync(User, therapy, PolicyNames.ResourceOwner);
+
+        if (!User.IsInRole(ClinicRoles.Admin))
+        {
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
+        }
 
         var oldAppoitment = await _appointmentRepository.GetAsync(therapyId, appoitmentId);
         if (oldAppoitment == null)
@@ -98,8 +124,22 @@ public class AppointmentController : ControllerBase
     }
 
     [HttpDelete("{appoitmentId}")]
+    [Authorize(Roles = ClinicRoles.Doctor + "," + ClinicRoles.Admin)]
     public async Task<ActionResult> Remove(int therapyId, int appoitmentId)
     {
+        var therapy = await _therapiesRepository.GetAsync(therapyId);
+        if (therapy == null) return NotFound($"Couldn't find a therapy with id of {therapyId}");
+        
+        var authorizationResult = await _authorizationService.AuthorizeAsync(User, therapy, PolicyNames.ResourceOwner);
+
+        if (!User.IsInRole(ClinicRoles.Admin))
+        {
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
+        }
+        
         var appoitment = await _appointmentRepository.GetAsync(therapyId, appoitmentId);
         if (appoitment == null)
             return NotFound();

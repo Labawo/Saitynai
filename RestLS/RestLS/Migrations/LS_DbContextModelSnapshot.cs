@@ -166,6 +166,9 @@ namespace RestLS.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("ForceRelogin")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
 
@@ -223,6 +226,12 @@ namespace RestLS.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("PatienId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("PatientId")
+                        .HasColumnType("longtext");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(65,30)");
 
@@ -233,6 +242,8 @@ namespace RestLS.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("PatienId");
 
                     b.HasIndex("TherapyId");
 
@@ -272,11 +283,17 @@ namespace RestLS.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("DoctorId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
 
                     b.ToTable("Therapies");
                 });
@@ -334,11 +351,17 @@ namespace RestLS.Migrations
 
             modelBuilder.Entity("RestLS.Data.Entities.Appointment", b =>
                 {
+                    b.HasOne("RestLS.Auth.Models.ClinicUser", "Patien")
+                        .WithMany()
+                        .HasForeignKey("PatienId");
+
                     b.HasOne("RestLS.Data.Entities.Therapy", "Therapy")
                         .WithMany()
                         .HasForeignKey("TherapyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Patien");
 
                     b.Navigation("Therapy");
                 });
@@ -352,6 +375,17 @@ namespace RestLS.Migrations
                         .IsRequired();
 
                     b.Navigation("Appoint");
+                });
+
+            modelBuilder.Entity("RestLS.Data.Entities.Therapy", b =>
+                {
+                    b.HasOne("RestLS.Auth.Models.ClinicUser", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
                 });
 #pragma warning restore 612, 618
         }

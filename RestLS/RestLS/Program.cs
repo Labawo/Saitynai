@@ -1,6 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestLS.Auth;
 using RestLS.Auth.Models;
@@ -8,7 +11,7 @@ using RestLS.Data;
 using RestLS.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 // ORM - Microsoft.EntityFrameworkCore.SqlServer
 // Microsoft.EntityFrameworkCore.Tools
 // Orm managment - dotnet tool install --global dotnet-ef
@@ -47,12 +50,23 @@ builder.Services.AddTransient<IRecomendationsRepository, RecomendationsRepositor
 builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<AuthDbSeeder>();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(PolicyNames.ResourceOwner, policy => policy.Requirements.Add(new ResourceOwnerRequirement()));
+});
+
+builder.Services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();
+
 var app = builder.Build();
 
 app.UseRouting();
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
+
+using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<LS_DbContext>();
+dbContext.Database.Migrate();
 
 var dbSeeder = app.Services.CreateScope().ServiceProvider.GetRequiredService<AuthDbSeeder>();
 await dbSeeder.SeedAsync();

@@ -50,4 +50,6 @@ public class AuthDbSeeder
                 await _roleManager.CreateAsync(new IdentityRole(role));
         }
     }
+    
+    
 }

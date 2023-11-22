@@ -1,4 +1,7 @@
-﻿namespace RestLS.Data.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using RestLS.Auth.Models;
+
+namespace RestLS.Data.Entities;
 
 public class Appointment
 {
@@ -8,4 +11,7 @@ public class Appointment
     public decimal Price { get; set; }
     public bool IsAvailable { get; set; }
     public Therapy Therapy { get; set; }
+    
+    public string? PatientId { get; set; }
+    public ClinicUser? Patien { get; set; }
 }
