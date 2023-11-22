@@ -8,6 +8,8 @@ public interface IAppointmentsRepository
     Task<Appointment?> GetAsync(int therapyId, int appointmentId);
     Task<Appointment?> GetAsync(int therapyId, DateTime date);
     Task<IReadOnlyList<Appointment>> GetManyAsync(int therapyId);
+    Task<IReadOnlyList<Appointment>> GetManyAvailableAsync(int therapyId);
+    Task<IReadOnlyList<Appointment>> GetManyPatientAsync(string patientId);
     Task CreateAsync(Appointment appointment);
     Task UpdateAsync(Appointment appointment);
     Task RemoveAsync(Appointment appointment);
@@ -35,6 +37,16 @@ public class AppointmentsRepository : IAppointmentsRepository
     public async Task<IReadOnlyList<Appointment>> GetManyAsync(int therapyId)
     {
         return await _lsDbContext.Appointments.Where(o => o.Therapy.Id == therapyId).ToListAsync();
+    }
+    
+    public async Task<IReadOnlyList<Appointment>> GetManyAvailableAsync(int therapyId)
+    {
+        return await _lsDbContext.Appointments.Where(o => o.Therapy.Id == therapyId && o.IsAvailable == true && o.Time >= DateTime.UtcNow.AddDays(1)).ToListAsync();
+    }
+    
+    public async Task<IReadOnlyList<Appointment>> GetManyPatientAsync(string patientId)
+    {
+        return await _lsDbContext.Appointments.Where(o => o.PatientId == patientId).ToListAsync();
     }
     
     public async Task CreateAsync(Appointment appointment)
