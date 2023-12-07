@@ -60,6 +60,15 @@ builder.Services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationH
 var app = builder.Build();
 
 app.UseRouting();
+
+app.UseCors(options =>
+{
+    options.WithOrigins("http://localhost:3000") // Specify your frontend URL
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials(); // Enable credentials
+});
+
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
