@@ -39,7 +39,7 @@ public class JwtTokenService : IJwtTokenService
         var accessSecurityToken = new JwtSecurityToken(
             issuer: _issuer,
             audience: _audience,
-            expires: DateTime.UtcNow.AddSeconds(30),
+            expires: DateTime.UtcNow.AddMinutes(30),
             claims: authClaims,
             signingCredentials: new SigningCredentials(_authSigningKey, SecurityAlgorithms.HmacSha256)
         );
@@ -58,7 +58,7 @@ public class JwtTokenService : IJwtTokenService
         var accessSecurityToken = new JwtSecurityToken(
             issuer: _issuer,
             audience: _audience,
-            expires: DateTime.UtcNow.AddSeconds(6000),
+            expires: DateTime.UtcNow.AddHours(8),
             claims: authClaims,
             signingCredentials: new SigningCredentials(_authSigningKey, SecurityAlgorithms.HmacSha256)
         );

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RestLS.Auth;
 using RestLS.Auth.Models;
 
@@ -22,31 +23,7 @@ public class AuthController : ControllerBase
         _jwtTokenService = jwtTokenService;
     }
     
-    [HttpGet]
-    [Route("patients")]
-    [Authorize(Roles = ClinicRoles.Doctor)]
-    public IActionResult GetPatients()
-    {
-        var patients = _userManager.GetUsersInRoleAsync(ClinicRoles.Patient)
-            .Result
-            .Select(u => new UserDto(u.Id, u.UserName, u.Email))
-            .ToList();
-
-        return Ok(patients);
-    }
-
-    [HttpGet]
-    [Route("doctors")]
-    [Authorize(Roles = ClinicRoles.Admin)]
-    public IActionResult GetDoctors()
-    {
-        var doctors = _userManager.GetUsersInRoleAsync(ClinicRoles.Doctor)
-            .Result
-            .Select(u => new UserDto(u.Id, u.UserName, u.Email))
-            .ToList();
-
-        return Ok(doctors);
-    }
+    
     
     [HttpPost]
     [Route("register")]
@@ -152,52 +129,5 @@ public class AuthController : ControllerBase
         
         return Ok(new SuccessfulLoginDto(accessToken, refreshToken));
     }
-    
-    
-    [HttpDelete]
-    [Route("deleteUser/{userId}")]
-    [Authorize(Roles = ClinicRoles.Admin)] // Assuming only administrators can delete users
-    public async Task<IActionResult> DeleteUser(string userId)
-    {
-        var user = await _userManager.FindByIdAsync(userId);
-
-        if (user == null)
-        {
-            return NotFound("User not found.");
-        }
-
-        var result = await _userManager.DeleteAsync(user);
-
-        if (result.Succeeded)
-        {
-            return NoContent(); // 204 No Content - Successful deletion
-        }
-        // If the deletion was not successful, return the errors
-        return BadRequest(result.Errors);
-    }
-    
-    /*[HttpPut]
-    [Route("validateUser/{userId}")]
-    [Authorize(Roles = ClinicRoles.Admin)] // Assuming only administrators can update user parameters
-    public async Task<IActionResult> ValidateUser(string userId)
-    {
-        var user = await _userManager.FindByIdAsync(userId);
-
-        if (user == null)
-        {
-            return NotFound("User not found.");
-        }
-
-        // Update user parameters
-        user.IsVerified = true;
-
-        var result = await _userManager.UpdateAsync(user);
-
-        if (result.Succeeded)
-        {
-            return Ok("User parameters updated successfully.");
-        }
-        return BadRequest(result.Errors);
-    }*/
 
 }

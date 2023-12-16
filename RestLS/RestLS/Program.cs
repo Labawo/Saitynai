@@ -40,6 +40,7 @@ builder.Services.AddAuthentication(options =>
         options.TokenValidationParameters.ValidIssuer = builder.Configuration["JWT:ValidIssuer"];
         options.TokenValidationParameters.IssuerSigningKey =
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]));
+        options.TokenValidationParameters.ClockSkew = new TimeSpan(0, 0, 5);
     });
     
 builder.Services.AddDbContext<LS_DbContext>();
