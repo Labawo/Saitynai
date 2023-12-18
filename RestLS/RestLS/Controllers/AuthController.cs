@@ -51,31 +51,6 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost]
-    [Route("registerDoctor")]
-    public async Task<IActionResult> RegisterDoctor(RegisterUserDto registerUserDto)
-    {
-        var user = await _userManager.FindByNameAsync(registerUserDto.UserName);
-
-        if (user != null)
-            return BadRequest("This user already exists.");
-
-        var newUser = new ClinicUser
-        {
-            Email = registerUserDto.Email,
-            UserName = registerUserDto.UserName
-        };
-
-        var createUserResult = await _userManager.CreateAsync(newUser, registerUserDto.Password);
-
-        if (!createUserResult.Succeeded)
-            return BadRequest("Could not create a user.");
-
-        await _userManager.AddToRoleAsync(newUser, ClinicRoles.Doctor);
-
-        return CreatedAtAction(nameof(RegisterDoctor), new UserDto(newUser.Id, newUser.UserName, newUser.Email));
-    }
-    
-    [HttpPost]
     [Route("login")]
     public async Task<IActionResult> Login(LoginDto loginDto)
     {

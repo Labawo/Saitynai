@@ -50,12 +50,13 @@ public class UsersController : ControllerBase
     [Authorize(Roles = ClinicRoles.Admin)]
     public IActionResult GetDoctors()
     {
-        var doctors = _userManager.GetUsersInRoleAsync(ClinicRoles.Doctor)
+        var doctorUsers = _userManager.GetUsersInRoleAsync(ClinicRoles.Doctor)
             .Result
+            .Where(u => !_userManager.IsInRoleAsync(u, ClinicRoles.Admin).Result) // Exclude users with the Admin role
             .Select(u => new UserDto(u.Id, u.UserName, u.Email))
             .ToList();
 
-        return Ok(doctors);
+        return Ok(doctorUsers);
     }
     
     [HttpDelete]
@@ -78,6 +79,32 @@ public class UsersController : ControllerBase
         }
         // If the deletion was not successful, return the errors
         return BadRequest(result.Errors);
+    }
+    
+    [HttpPost]
+    [Route("registerDoctor")]
+    [Authorize(Roles = ClinicRoles.Admin)]
+    public async Task<IActionResult> RegisterDoctor(RegisterUserDto registerUserDto)
+    {
+        var user = await _userManager.FindByNameAsync(registerUserDto.UserName);
+
+        if (user != null)
+            return BadRequest("This user already exists.");
+
+        var newUser = new ClinicUser
+        {
+            Email = registerUserDto.Email,
+            UserName = registerUserDto.UserName
+        };
+
+        var createUserResult = await _userManager.CreateAsync(newUser, registerUserDto.Password);
+
+        if (!createUserResult.Succeeded)
+            return BadRequest("Could not create a doctor.");
+
+        await _userManager.AddToRoleAsync(newUser, ClinicRoles.Doctor);
+
+        return CreatedAtAction(nameof(RegisterDoctor), new UserDto(newUser.Id, newUser.UserName, newUser.Email));
     }
     
     /*[HttpPut]

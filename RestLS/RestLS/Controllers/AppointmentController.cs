@@ -65,7 +65,7 @@ public class AppointmentController : ControllerBase
         
         var appoitment = new Appointment{Price = appoitmentDto.Price};
         appoitment.Therapy = therapy;
-        appoitment.AppointmentDate = DateTime.Now;
+        appoitment.AppointmentDate = new DateTime();
         appoitment.IsAvailable = true;
         appoitment.Time = DateTime.Parse(appoitmentDto.Time);
 

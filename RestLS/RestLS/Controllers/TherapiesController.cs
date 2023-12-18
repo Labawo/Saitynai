@@ -82,7 +82,7 @@ public class TherapiesController : ControllerBase
         {
             Name = createTherapyDto.Name, 
             Description = createTherapyDto.Description,
-            DoctorId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+            DoctorId = User.IsInRole(ClinicRoles.Admin) ? createTherapyDto.DoctorId : User.FindFirstValue(JwtRegisteredClaimNames.Sub)
         };
         
         await _therapiesRepository.CreateAsync(therapy);
@@ -107,12 +107,9 @@ public class TherapiesController : ControllerBase
         
         var authorizationResult = await _authorizationService.AuthorizeAsync(User, therapy, PolicyNames.ResourceOwner);
 
-        if (!User.IsInRole(ClinicRoles.Admin))
+        if (!authorizationResult.Succeeded)
         {
-            if (!authorizationResult.Succeeded)
-            {
-                return Forbid();
-            }
+            return Forbid();
         }
         therapy.Name = updateTherapyDto.Name;
         therapy.Description = updateTherapyDto.Description;
@@ -135,14 +132,10 @@ public class TherapiesController : ControllerBase
         
         var authorizationResult = await _authorizationService.AuthorizeAsync(User, therapy, PolicyNames.ResourceOwner);
 
-        if (!User.IsInRole(ClinicRoles.Admin))
+        if (!authorizationResult.Succeeded)
         {
-            if (!authorizationResult.Succeeded)
-            {
-                return Forbid();
-            }
+            return Forbid();
         }
-        
 
         await _therapiesRepository.RemoveAsync(therapy);
         
