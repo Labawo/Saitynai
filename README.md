@@ -403,4 +403,4 @@ Atsakas:
 ```
 
 ## Išvados
-Projekto kūrimo metu buvo įgyvendinti užsibrėžti tiklai ir pagilintos žinios dirbant su .NET ir Reack.
+Projekto kūrimo metu buvo įgyvendinti užsibrėžti tiklai ir pagilintos žinios dirbant su .NET ir React.
