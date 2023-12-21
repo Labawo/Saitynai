@@ -47,7 +47,7 @@ public class RecomendationsController : ControllerBase
         }
         
         var recomendations = await _recomendationsRepository.GetManyAsync(therapy.Id, appointment.ID);
-        return recomendations.Select(o => new RecomendationDto(o.ID, o.Description));
+        return recomendations.Select(o => new RecomendationDto(o.ID, o.Description, o.RecomendationDate));
     }
 
     // /api/topics/1/posts/2
@@ -71,7 +71,7 @@ public class RecomendationsController : ControllerBase
         var recomendation = await _recomendationsRepository.GetAsync(therapy.Id, appointment.ID, recomendationId);
         if (recomendation == null) return NotFound();
 
-        return Ok(new RecomendationDto(recomendation.ID, recomendation.Description));
+        return Ok(new RecomendationDto(recomendation.ID, recomendation.Description, recomendation.RecomendationDate));
     }
 
     [HttpPost]
@@ -97,7 +97,7 @@ public class RecomendationsController : ControllerBase
 
         await _recomendationsRepository.CreateAsync(recomendation);
 
-        return Created("GetRecomendation", new RecomendationDto(recomendation.ID, recomendation.Description));
+        return Created("GetRecomendation", new RecomendationDto(recomendation.ID, recomendation.Description, recomendation.RecomendationDate));
     }
 
     [HttpPut("{recomendationId}")]
@@ -126,7 +126,7 @@ public class RecomendationsController : ControllerBase
 
         await _recomendationsRepository.UpdateAsync(oldRecomendation);
 
-        return Ok(new RecomendationDto(oldRecomendation.ID, oldRecomendation.Description));
+        return Ok(new RecomendationDto(oldRecomendation.ID, oldRecomendation.Description, oldRecomendation.RecomendationDate));
     }
 
     [HttpDelete("{recomendationId}")]

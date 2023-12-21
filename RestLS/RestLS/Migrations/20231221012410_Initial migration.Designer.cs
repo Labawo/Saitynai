@@ -11,8 +11,8 @@ using RestLS.Data;
 namespace RestLS.Migrations
 {
     [DbContext(typeof(LS_DbContext))]
-    [Migration("20231121214755_Initial migration with identity")]
-    partial class Initialmigrationwithidentity
+    [Migration("20231221012410_Initial migration")]
+    partial class Initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -223,8 +223,9 @@ namespace RestLS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("DoctorName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("tinyint(1)");

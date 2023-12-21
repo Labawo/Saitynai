@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using RestLS.Auth.Models;
@@ -14,12 +15,14 @@ namespace RestLS.Controllers;
 [Route("api/therapies/{therapyId}/appointments")]
 public class AppointmentController : ControllerBase
 {
+    private readonly UserManager<ClinicUser> _userManager;
     private readonly ITherapiesRepository _therapiesRepository;
     private readonly IAppointmentsRepository _appointmentRepository;
     private readonly IAuthorizationService _authorizationService;
 
-    public AppointmentController(IAppointmentsRepository appointmentRepository, ITherapiesRepository therapiesRepository, IAuthorizationService authorizationService)
+    public AppointmentController(UserManager<ClinicUser> userManager, IAppointmentsRepository appointmentRepository, ITherapiesRepository therapiesRepository, IAuthorizationService authorizationService)
     {
+        _userManager = userManager;
         _appointmentRepository = appointmentRepository;
         _therapiesRepository = therapiesRepository;
         _authorizationService = authorizationService;
@@ -74,8 +77,14 @@ public class AppointmentController : ControllerBase
         
         var appoitment = new Appointment{Price = appoitmentDto.Price};
         appoitment.Therapy = therapy;
-        appoitment.AppointmentDate = new DateTime();
         appoitment.IsAvailable = true;
+        var userId = therapy.DoctorId;
+        var doctor = await _userManager.FindByIdAsync(userId);
+
+        if (doctor != null)
+        {
+            appoitment.DoctorName = doctor.UserName; // Replace FullName with the property name containing the doctor's name in your ApplicationUser model
+        } 
 
         var existingAppointments = await _appointmentRepository.GetManyForDoctorAsync(therapy.DoctorId);
         DateTime oneWeekFromNow = DateTime.UtcNow.AddDays(7);

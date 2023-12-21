@@ -36,7 +36,7 @@ public class PatientDoctorController : ControllerBase
         if (appointment == null) return new List<RecomendationDto>();
         
         var recomendations = await _recomendationsRepository.GetManyForPatientAsync(appointment.ID, User.FindFirstValue(JwtRegisteredClaimNames.Sub));
-        return recomendations.Select(o => new RecomendationDto(o.ID, o.Description));
+        return recomendations.Select(o => new RecomendationDto(o.ID, o.Description, o.RecomendationDate));
     }
 
     [HttpGet("getWeeklyAppointments")]
@@ -54,6 +54,6 @@ public class PatientDoctorController : ControllerBase
     {
         var appointments = await _appointmentRepository.GetManyForPatientAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
 
-        return appointments.Select(o => new AppointmentForPatientDto(o.ID, o.Time, o.Price, 1));
+        return appointments.Select(o => new AppointmentForPatientDto(o.ID, o.Time, o.Price, o.DoctorName));
     }
 }

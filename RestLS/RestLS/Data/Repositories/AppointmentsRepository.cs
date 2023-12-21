@@ -58,7 +58,7 @@ public class AppointmentsRepository : IAppointmentsRepository
     
     public async Task<IReadOnlyList<Appointment>> GetManyForDoctorAsync(string doctorId)
     {
-        return await _lsDbContext.Appointments.Where(o => o.Therapy.DoctorId == doctorId).ToListAsync();
+        return await _lsDbContext.Appointments.Where(o => o.Therapy.DoctorId == doctorId && o.PatientId != null).ToListAsync();
     }
     
     public async Task CreateAsync(Appointment appointment)
