@@ -7,6 +7,7 @@ public interface IRecomendationsRepository
 {
     Task<Recomendation?> GetAsync(int therapyId, int appointmentId, int recomendationId);
     Task<IReadOnlyList<Recomendation>> GetManyAsync(int therapyId, int appointmentId);
+    Task<IReadOnlyList<Recomendation>> GetManyForPatientAsync(int appointmentId, string patientId);
     Task CreateAsync(Recomendation recomendation);
     Task UpdateAsync(Recomendation recomendation);
     Task RemoveAsync(Recomendation recomendation);
@@ -26,6 +27,11 @@ public class RecomendationsRepository : IRecomendationsRepository
         return await _lsDbContext.Recomendations.FirstOrDefaultAsync(o => o.ID == recomendationId && o.Appoint.ID == appointmentId && o.Appoint.Therapy.Id == therapyId);
     }
 
+    public async Task<IReadOnlyList<Recomendation>> GetManyForPatientAsync(int appointmentId, string patientId)
+    {
+        return await _lsDbContext.Recomendations.Where(o => o.Appoint.ID == appointmentId && o.Appoint.PatientId == patientId).ToListAsync();
+    }
+    
     public async Task<IReadOnlyList<Recomendation>> GetManyAsync(int therapyId, int appointmentId)
     {
         return await _lsDbContext.Recomendations.Where(o => o.Appoint.Therapy.Id == therapyId && o.Appoint.ID == appointmentId).ToListAsync();

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 using RestLS.Auth.Models;
 using RestLS.Data.Dtos.Recomendation;
 using RestLS.Data.Entities;
@@ -9,7 +11,7 @@ namespace RestLS.Controllers;
 
 
 [ApiController]
-[Route("api/therapies/{therapyId}/appointments/{appointmentId}/recomendations")]
+[Route("api/therapies/{therapyId}/appointments/{appointmentId}/recommendations")]
 public class RecomendationsController : ControllerBase
 {
     private readonly ITherapiesRepository _therapiesRepository;

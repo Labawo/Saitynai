@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestLS.Auth.Models;
+using RestLS.Data.Repositories;
 
 namespace RestLS.Controllers;
 
@@ -11,10 +12,12 @@ namespace RestLS.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly UserManager<ClinicUser> _userManager;
+    private readonly IAppointmentsRepository _appointmentRepository;
     
-    public UsersController(UserManager<ClinicUser> userManager)
+    public UsersController(UserManager<ClinicUser> userManager, IAppointmentsRepository appointmentRepository)
     {
         _userManager = userManager;
+        _appointmentRepository = appointmentRepository;
     }
     
     [HttpGet]
@@ -60,7 +63,7 @@ public class UsersController : ControllerBase
     }
     
     [HttpDelete]
-    [Route("deleteUser/{userId}")]
+    [Route("users/{userId}")]
     [Authorize(Roles = ClinicRoles.Admin)] // Assuming only administrators can delete users
     public async Task<IActionResult> DeleteUser(string userId)
     {
@@ -69,6 +72,11 @@ public class UsersController : ControllerBase
         if (user == null)
         {
             return NotFound("User not found.");
+        }
+
+        if (User.IsInRole(ClinicRoles.Patient))
+        {
+            await _appointmentRepository.RemoveRangeAsync(userId);
         }
 
         var result = await _userManager.DeleteAsync(user);

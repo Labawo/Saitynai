@@ -6,13 +6,14 @@ namespace RestLS.Data.Repositories;
 public interface IAppointmentsRepository
 {
     Task<Appointment?> GetAsync(int therapyId, int appointmentId);
-    Task<Appointment?> GetAsync(int therapyId, DateTime date);
+    Task<Appointment?> GetAsync(int appointmentId);
     Task<IReadOnlyList<Appointment>> GetManyAsync(int therapyId);
-    Task<IReadOnlyList<Appointment>> GetManyAvailableAsync(int therapyId);
-    Task<IReadOnlyList<Appointment>> GetManyPatientAsync(string patientId);
+    Task<IReadOnlyList<Appointment>> GetManyForPatientAsync(string patientId);
+    Task<IReadOnlyList<Appointment>> GetManyForDoctorAsync(string doctorId);
     Task CreateAsync(Appointment appointment);
     Task UpdateAsync(Appointment appointment);
     Task RemoveAsync(Appointment appointment);
+    Task RemoveRangeAsync(string patientId);
 }
 
 public class AppointmentsRepository : IAppointmentsRepository
@@ -29,9 +30,9 @@ public class AppointmentsRepository : IAppointmentsRepository
         return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.ID == appointmentId && o.Therapy.Id == therapyId);
     }
     
-    public async Task<Appointment?> GetAsync(int therapyId, DateTime date)
+    public async Task<Appointment?> GetAsync(int appointmentId)
     {
-        return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.Time <= date && o.Time.AddHours(1) >= date && o.Therapy.Id == therapyId);
+        return await _lsDbContext.Appointments.FirstOrDefaultAsync(o => o.ID == appointmentId);
     }
 
     public async Task<IReadOnlyList<Appointment>> GetManyAsync(int therapyId)
@@ -39,14 +40,25 @@ public class AppointmentsRepository : IAppointmentsRepository
         return await _lsDbContext.Appointments.Where(o => o.Therapy.Id == therapyId).ToListAsync();
     }
     
-    public async Task<IReadOnlyList<Appointment>> GetManyAvailableAsync(int therapyId)
+    public async Task<IReadOnlyList<Appointment>> GetManyForPatientAsync(string patientId)
     {
-        return await _lsDbContext.Appointments.Where(o => o.Therapy.Id == therapyId && o.IsAvailable == true && o.Time >= DateTime.UtcNow.AddDays(1)).ToListAsync();
+        try
+        {
+            return await _lsDbContext.Appointments
+                .Where(o => o.PatientId == patientId)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            // Log the exception for debugging purposes
+            Console.WriteLine($"Error in GetManyForPatientAsync: {ex.Message}");
+            throw; // Rethrow the exception or handle it appropriately
+        }
     }
     
-    public async Task<IReadOnlyList<Appointment>> GetManyPatientAsync(string patientId)
+    public async Task<IReadOnlyList<Appointment>> GetManyForDoctorAsync(string doctorId)
     {
-        return await _lsDbContext.Appointments.Where(o => o.PatientId == patientId).ToListAsync();
+        return await _lsDbContext.Appointments.Where(o => o.Therapy.DoctorId == doctorId).ToListAsync();
     }
     
     public async Task CreateAsync(Appointment appointment)
@@ -64,6 +76,15 @@ public class AppointmentsRepository : IAppointmentsRepository
     public async Task RemoveAsync(Appointment appointment)
     {
         _lsDbContext.Appointments.Remove(appointment);
+        await _lsDbContext.SaveChangesAsync();
+    }
+    
+    public async Task RemoveRangeAsync(string patientId)
+    {
+        var appointmentsToRemove = _lsDbContext.Appointments
+            .Where(appointment => appointment.PatientId == patientId);
+
+        _lsDbContext.Appointments.RemoveRange(appointmentsToRemove);
         await _lsDbContext.SaveChangesAsync();
     }
 }

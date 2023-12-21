@@ -52,7 +52,7 @@ public class TherapiesController : ControllerBase
         
         Response.Headers.Add("Pagination", JsonSerializer.Serialize(paginationMetaData));
 
-        return therapies.Select(o => new TherapyDto(o.Id, o.Name, o.Description));
+        return therapies.Select(o => new TherapyDto(o.Id, o.Name, o.Description, o.DoctorId));
     }
     
     // api/therapies/{therapyId}
@@ -69,7 +69,7 @@ public class TherapiesController : ControllerBase
 
         var links = CreateLinksForTherapies(therapyId);
 
-        var therapyDto = new TherapyDto(therapy.Id, therapy.Name, therapy.Description);
+        var therapyDto = new TherapyDto(therapy.Id, therapy.Name, therapy.Description, therapy.DoctorId);
         
         return Ok(new { Resource = therapyDto, Links = links});
     }
@@ -88,7 +88,7 @@ public class TherapiesController : ControllerBase
         await _therapiesRepository.CreateAsync(therapy);
         
         //201
-        return Created("", new TherapyDto(therapy.Id, therapy.Name, therapy.Description));
+        return Created("", new TherapyDto(therapy.Id, therapy.Name, therapy.Description, therapy.DoctorId));
         //return CreatedAtAction("GetTherapy", new { therapyId = therapy.Id }, new TherapyDto(therapy.Id, therapy.Name, therapy.Description));
 
     }
@@ -116,7 +116,7 @@ public class TherapiesController : ControllerBase
         
         await _therapiesRepository.UpdateAsync(therapy);
 
-        return Ok(new TherapyDto(therapy.Id, therapy.Name, therapy.Description));
+        return Ok(new TherapyDto(therapy.Id, therapy.Name, therapy.Description, therapy.DoctorId));
     }
     
     [HttpDelete("{therapyId}", Name = "DeleteTherapy")]
