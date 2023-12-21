@@ -82,7 +82,7 @@ Kitų langų išdėstymas yra panašus
 Iš viso sukurti 23 API endpoint'ų. Pagal Twitter specifikaciją aprašomi 17 iš jų (likę 6 yra pagalbiniai, failų įkėlimui ir šalinimui iš serverio).
 | Metodas | Endpoint URL | Autentifikavimas | Užklausos parametrai | Atsako kodai | Pavyzdys |
 | --- | --- | --- | --- | --- | --- |
-| GET | https://restls.azurewebsites.net/api/therapies/ | Nėra | Nėra | 200 | Užklausa: https://restls.azurewebsites.net/api/therapies/ |
+| GET | https://restls.azurewebsites.net/api/therapies | Nėra | Nėra | 200 | Užklausa: https://restls.azurewebsites.net/api/therapies |
 
 Atsakas:  
 ```yaml
@@ -184,7 +184,7 @@ Atsakas:
 ```
 | Metodas | Endpoint URL | Autentifikavimas | Užklausos parametrai | Atsako kodai | Pavyzdys |
 | --- | --- | --- | --- | --- | --- |
-| GET | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId | Nėra | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius | 200, 400 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1 |
+| GET | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId | JWT Token: reikalinga Doctor arba Admin rolė, resuras priklauso Doctor | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius | 200, 400 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1 |
 
 Atsakas:  
 ```yaml
@@ -210,7 +210,7 @@ Atsakas:
 ```
 | Metodas | Endpoint URL | Autentifikavimas | Užklausos parametrai | Atsako kodai | Pavyzdys |
 | --- | --- | --- | --- | --- | --- |
-| PUT | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId | JWT Token: reikalinga User/Admin rolė, resursas priklauso User | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius, Vizito objektas | 200, 400, 401, 403, 404 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1 |
+| PUT | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId | JWT Token: reikalinga Doctor arba Admin rolė, resursas priklauso Doctor | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius, Vizito objektas | 200, 400, 401, 403, 404 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1 |
 
 Atsakas:  
 ```yaml
@@ -223,14 +223,14 @@ Atsakas:
 ```
 | Metodas | Endpoint URL | Autentifikavimas | Užklausos parametrai | Atsako kodai | Pavyzdys |
 | --- | --- | --- | --- | --- | --- |
-| DELETE | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId | JWT Token: reikalinga User/Admin rolė, resursas priklauso User | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius | 204, 400, 401, 403 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1 |
+| DELETE | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId | JWT Token: reikalinga Doctor arba Admin rolė, resursas priklauso Doctor | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius | 204, 400, 401, 403 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1 |
 Atsakas:  
 ```yaml
 
 ```
 | Metodas | Endpoint URL | Autentifikavimas | Užklausos parametrai | Atsako kodai | Pavyzdys |
 | --- | --- | --- | --- | --- | --- |
-| GET | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId/recommendations | Nėra | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius | 200, 400 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1/recommendations |
+| GET | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId/recommendations | JWT Token: reikalinga Doctor arba Admin rolė, resuras priklauso Doctor | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius | 200, 400 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1/recommendations |
 
 Atsakas:  
 ```yaml
@@ -249,7 +249,7 @@ Atsakas:
 ```
 | Metodas | Endpoint URL | Autentifikavimas | Užklausos parametrai | Atsako kodai | Pavyzdys |
 | --- | --- | --- | --- | --- | --- |
-| GET | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId/recommendations/:recommendationid | Nėra  | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius, recommendationid - rekomendacijos identifikatorius | 200, 400 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1/recommendations/1 |
+| GET | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId/recommendations/:recommendationid | JWT Token: reikalinga Doctor arba Admin rolė, resuras priklauso Doctor  | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius, recommendationid - rekomendacijos identifikatorius | 200, 400 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1/recommendations/1 |
 
 Atsakas:  
 ```yaml
@@ -261,7 +261,7 @@ Atsakas:
 ```
 | Metodas | Endpoint URL | Autentifikavimas | Užklausos parametrai | Atsako kodai | Pavyzdys |
 | --- | --- | --- | --- | --- | --- |
-| POST | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId/recommendations | JWT Token: reikalinga User/Admin rolė | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius, Rekomendacijos objektas | 201, 400, 401, 403, 404 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1/recommendations |
+| POST | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId/recommendations | JWT Token: reikalinga Doctor arba Admin rolė | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius, Rekomendacijos objektas | 201, 400, 401, 403, 404 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1/recommendations |
 
 Atsakas:  
 ```yaml
@@ -273,7 +273,7 @@ Atsakas:
 ```
 | Metodas | Endpoint URL | Autentifikavimas | Užklausos parametrai | Atsako kodai | Pavyzdys |
 | --- | --- | --- | --- | --- | --- |
-| PUT | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId/recommendations/:recommendationid | JWT Token: reikalinga User/Admin rolė, resuras priklauso User | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius, recommendationid - rekomendacijos identifikatorius, Rekomendacijos objektas | 200, 400, 401, 403, 404 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1/recommendations/1 |
+| PUT | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId/recommendations/:recommendationid | JWT Token: reikalinga Doctor arba Admin rolė, resuras priklauso Doctor | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius, recommendationid - rekomendacijos identifikatorius, Rekomendacijos objektas | 200, 400, 401, 403, 404 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1/recommendations/1 |
 
 Atsakas:  
 ```yaml
@@ -285,7 +285,7 @@ Atsakas:
 ```
 | Metodas | Endpoint URL | Autentifikavimas | Užklausos parametrai | Atsako kodai | Pavyzdys |
 | --- | --- | --- | --- | --- | --- |
-| DELETE | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId/recommendations/:recommendationid | JWT Token: reikalinga User/Admin rolė, resuras priklauso User | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius, recommendationid - rekomendacijos identifikatorius | 204, 400, 401, 403 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1/recommendations/1 |
+| DELETE | https://restls.azurewebsites.net/api/therapies/:therapyId/appointments/:appintmentId/recommendations/:recommendationid | JWT Token: reikalinga Doctor arba Admin rolė, resuras priklauso Doctor | therapyId - terapijos identifikatorius, appintmentId - vizito identifikatorius, recommendationid - rekomendacijos identifikatorius | 204, 400, 401, 403 | Užklausa: https://restls.azurewebsites.net/api/therapies/1/appointments/1/recommendations/1 |
 Atsakas:  
 ```yaml
 
